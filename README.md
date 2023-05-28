@@ -7,6 +7,12 @@
 2. 加速创新,提高软件质量
 3. 共同学习
 
+## 💬 加入我们
+
+|  GPT商业版开源讨论群    | 作者微信 如果二维码过期请加我好友 |
+| :---        |    :----:  |
+|  ![image](https://github.com/apeto2/gpt-commercial/assets/131843341/0e4db493-9f54-4df2-a91d-bc2f33c04c94)     |  ![image](https://github.com/apeto2/gpt-commercial/assets/131843341/b6a8b5e2-4448-4e03-9335-9252eb55467b)      | 
+
 ## 部署教程
 
 :link: http://be.apeto.cn/archives/geniusaibu-shu-jiao-cheng
