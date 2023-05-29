@@ -14,9 +14,13 @@
 |  <img src="https://github.com/apeto2/gpt-commercial/assets/131843341/0e4db493-9f54-4df2-a91d-bc2f33c04c94?raw=true" alt="图片替换文本" width="200" height="250" align="bottom" />     |  <img src="https://github.com/apeto2/gpt-commercial/assets/131843341/b6a8b5e2-4448-4e03-9335-9252eb55467b" alt="图片替换文本" width="210" height="250" align="bottom" />     | 
 
 
-## 部署教程
+## 后台部署教程
 
 :link: http://be.apeto.cn/archives/geniusaibu-shu-jiao-cheng
+
+## 前端项目说明
+:link: https://www.gaojinglin.vip/archives/genius-web%E5%89%8D%E7%AB%AF%E9%A1%B9%E7%9B%AE%E8%AF%B4%E6%98%8E
+
 
 ## 模块说明
 
