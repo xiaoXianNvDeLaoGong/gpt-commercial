@@ -2,9 +2,9 @@
  * @Description:
  * @Version: 2.0
  * @Autor: jinglin.gao
- * @Date: 2023-03-29 17:32:18
+ * @Date: 2023-05-30 08:28:05
  * @LastEditors: jinglin.gao
- * @LastEditTime: 2023-03-31 13:15:52
+ * @LastEditTime: 2023-05-30 11:01:57
  */
 import ReactMarkdown from "react-markdown";
 import "katex/dist/katex.min.css";
@@ -13,8 +13,8 @@ import RehypeKatex from "rehype-katex";
 import RemarkGfm from "remark-gfm";
 import RehypePrsim from "rehype-prism-plus";
 import { useRef } from "react";
+import { copyToClipboardFn } from "@/utils";
 
-import "./markdown.css";
 export function PreCode(props) {
   const ref = useRef(null);
 
@@ -25,7 +25,7 @@ export function PreCode(props) {
         onClick={() => {
           if (ref.current) {
             const code = ref.current.innerText;
-            copyToClipboard(code);
+            copyToClipboardFn(code, "代码复制成功");
           }
         }}
       ></span>
@@ -33,28 +33,18 @@ export function PreCode(props) {
     </pre>
   );
 }
-export function copyToClipboard(text) {
-  navigator.clipboard
-    .writeText(text)
-    .then((res) => {
-      //   showToast(Locale.Copy.Success);
-      debugger;
-    })
-    .catch((err) => {
-      //   showToast(Locale.Copy.Failed);
-    });
-}
+
 export function Markdown(props) {
+  let content = props.content;
   return (
     <ReactMarkdown
-      className="markdown-body"
       remarkPlugins={[RemarkMath, RemarkGfm]}
       rehypePlugins={[RehypeKatex, [RehypePrsim, { ignoreMissing: true }]]}
       components={{
         pre: PreCode,
       }}
     >
-      {props.content}
+      {content}
     </ReactMarkdown>
   );
 }
