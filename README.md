@@ -9,6 +9,8 @@
 
 ## 💬 加入我们
 
+### 不要吝啬你的star 会持续更新  为了方便找到此项目 可以点一下小行星
+
 |  GPT商业版开源讨论群    | 作者微信 如果二维码过期请加我好友 |
 | :---        |    :----:  |
 |  <img src="https://github.com/apeto2/gpt-commercial/assets/131843341/0e4db493-9f54-4df2-a91d-bc2f33c04c94?raw=true" alt="图片替换文本" width="200" height="250" align="bottom" />     |  <img src="https://github.com/apeto2/gpt-commercial/assets/131843341/b6a8b5e2-4448-4e03-9335-9252eb55467b" alt="图片替换文本" width="210" height="250" align="bottom" />     | 
