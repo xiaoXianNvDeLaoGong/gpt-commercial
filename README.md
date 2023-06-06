@@ -33,6 +33,11 @@
 
 ## 前端示例
 
+> 公众号交互
+
+[![公众号交互](https://github.com/apeto2/gpt-commercial/assets/131843341/73e87373-e707-4079-8a8e-8a3518450ef4 "Shiprock")](https://be.apeto.cn/archives/shang-ye-ban-chatgpt)
+
+
 > 旅游攻略
 
 [![旅游攻略](http://be.apeto.cn/upload/image-qslc.png "Shiprock")](https://be.apeto.cn/archives/shang-ye-ban-chatgpt)
