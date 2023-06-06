@@ -27,9 +27,9 @@
 
 ## 模块说明
 
-|   C 端    | B 端 | 服务端     |
-| :---        |    :----:   |          ---: |
-|    base_web   |  dist      | ai-mechanician   |
+|   C 端源码    |  服务端     |
+| :---        |    :----:   |  
+|    genius_web   |  ai-mechanician   |
 
 ## 前端示例
 
