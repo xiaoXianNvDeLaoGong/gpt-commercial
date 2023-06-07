@@ -30,6 +30,10 @@
 
 ## 前端示例
 
+> 旅游攻略
+
+[![旅游攻略](http://be.apeto.cn/upload/image-qslc.png "Shiprock")](https://be.apeto.cn/archives/shang-ye-ban-chatgpt)
+
 > 产品经理
 
 [![产品经理](http://be.apeto.cn/upload/c%E7%AB%AF.png "Shiprock")](https://be.apeto.cn/archives/shang-ye-ban-chatgpt)

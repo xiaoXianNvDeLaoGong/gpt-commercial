@@ -89,7 +89,8 @@ public class OpenAISSEEventSourceListener extends EventSourceListener {
       }
       String content = delta.getContent();
       if (StrUtil.isBlank(content)) {
-        return;
+        delta.setContent("\n");
+        content="\n";
       }
       delta.setRole(Role.ASSISTANT.getName());
       lastMessage += content;
