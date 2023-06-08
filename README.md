@@ -17,9 +17,53 @@
 
 
 
-## 后台部署教程
+## 部署教程
 
-:link: http://be.apeto.cn/archives/geniusaibu-shu-jiao-cheng
+### 1.环境安装(新手建议宝塔安装)
+1. mysql
+2. redis
+3. Nginx
+
+### 2.初始化SQL
+将ai-mechanician/sql/ai-mechanician.sql导入到mysql中
+
+### 3.页面部署 
+:link: https://be.apeto.cn/archives/ye-mian-bu-shu
+
+### 4.服务端部署
+
+#### 1.执行命令:
+```shell
+mkdir -p /www/wwwroot/docker/gpt-commercial/{config,logs} &&  cd /www/wwwroot/docker/gpt-commercial/config
+```
+#### 2.将配置文件application-dev.yaml放到当前目录下
+
+#### 3.创建docker-compose.yaml
+```yaml
+version: '3'
+services:
+  gpt-commercial:
+    container_name: gpt-commercial
+    network_mode: "host"
+    image: registry.cn-hangzhou.aliyuncs.com/warape/gpt-commercial:latest
+    volumes:
+      - /www/wwwroot/docker/gpt-commercial/config:/home/spring/config  #config映射目录
+      - /www/wwwroot/docker/gpt-commercial/logs:/home/spring/logs     #logs映射目录
+    environment:
+      - JAVA_OPTS=-Xmx1024m -Djava.awt.headless=true -XX:+HeapDumpOnOutOfMemoryError -XX:MaxGCPauseMillis=20 -XX:InitiatingHeapOccupancyPercent=35 -Xloggc:/home/spring/logs/gc.log -Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.port=9876 -Dcom.sun.management.jmxremote.ssl=false -Dcom.sun.management.jmxremote.authenticate=false -Dlogging.file.path=/home/spring/logs -Duser.timezone=Asia/Shanghai -Dfile.encoding=UTF-8
+      - SPRING_PROFILES_ACTIVE=dev # 环境变量 默认dev 可手动修改
+      - SPRING_CONFIG_LOCATION=file:/home/spring/config/
+      - SERVER_PORT=8080 # 端口号 如果冲突可修改 修改后要和Nginx的反向代理做适配 
+```
+
+#### 4.启动docker
+```shell
+docker-compose  -f docker-compose.yaml up -d
+```
+#### 5.查看日志
+```shell
+docker-compose -f docker-compose.yaml logs
+```
 
 ## 前端项目说明
 :link: https://www.gaojinglin.vip/archives/genius-web%E5%89%8D%E7%AB%AF%E9%A1%B9%E7%9B%AE%E8%AF%B4%E6%98%8E
@@ -54,15 +98,15 @@
 
 ## 集成框架
 
-|   框架    | 版本 | 
-| :---        |    :----:   
-|    springboot   |  2.7.0      | 
-|    redisson   |  3.17.0      | 
-|    mybatis-plus   |  3.5.2      | 
-|    IJPay   |  2.9.6      | 
-|    knife4j   |  4.1.0      | 
-|    sa-token   |  1.34.0      | 
-|    weixin-java-mp   |  4.4.0      | 
+| 框架             |   版本   | 
+|:---------------|:------:|
+| springboot     | 2.7.0  | 
+| redisson       | 3.17.0 | 
+| mybatis-plus   | 3.5.2  | 
+| IJPay          | 2.9.6  | 
+| knife4j        | 4.1.0  | 
+| sa-token       | 1.34.0 | 
+| weixin-java-mp | 4.4.0  | 
 
 ## 部署要求
 1. MySQL 5.7及以上
