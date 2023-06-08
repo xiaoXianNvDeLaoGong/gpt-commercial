@@ -7,14 +7,58 @@
 2. 加速创新,提高软件质量
 3. 共同学习
 
-## 💬 加入我们
 
-### ⭐️ 不要吝啬你的star 会持续更新 为了方便找到此项目 可以点一下小星星
+## 功能
+1. openai所有接口的对接
+2. 超长token优化及网络速度优化
+3. 支付宝当面付对接，可用来支付会员卡
+4. 微信公众号对接，包括公众号关注监听，取关监听，地理位置监听，扫码事件监听，菜单监听
+5. 登录方式： 微信授权登录/邮箱登录/短信登录(阿里云短信服务)
+6. AI角色赋能
+7. 会员卡功能
+8. 反馈与建议
 
-|  GPT商业版开源讨论群    | 作者微信 如果二维码过期请加我好友 |
-| :---        |    :----:  |
-|  <img src="https://github.com/apeto2/gpt-commercial/assets/131843341/2d3ea9d6-156f-48af-9c3e-8061d49adda7?raw=true" alt="图片替换文本" width="200" height="250" align="bottom" />     |  <img src="https://github.com/apeto2/gpt-commercial/assets/131843341/b6a8b5e2-4448-4e03-9335-9252eb55467b" alt="图片替换文本" width="210" height="250" align="bottom" />     | 
 
+## 前端示例
+
+> 公众号交互
+
+<img src="https://github.com/apeto2/gpt-commercial/assets/131843341/73e87373-e707-4079-8a8e-8a3518450ef4?raw=true" alt="图片替换文本" width="200" height="450" align="bottom" />
+
+
+> 旅游攻略
+
+[![旅游攻略](http://be.apeto.cn/upload/image-qslc.png "Shiprock")](https://be.apeto.cn/archives/shang-ye-ban-chatgpt)
+
+> 产品经理
+
+[![产品经理](http://be.apeto.cn/upload/c%E7%AB%AF.png "Shiprock")](https://be.apeto.cn/archives/shang-ye-ban-chatgpt)
+> 会员购买
+
+[![会员购买](http://be.apeto.cn/upload/image-eksc.png "Shiprock")](https://be.apeto.cn/archives/shang-ye-ban-chatgpt)
+> 个人信息
+
+[![个人信息](http://be.apeto.cn/upload/image-qumb.png "Shiprock")](https://be.apeto.cn/archives/shang-ye-ban-chatgpt)
+
+## 集成框架
+
+| 框架             |   版本   | 
+|:---------------|:------:|
+| springboot     | 2.7.0  | 
+| redisson       | 3.17.0 | 
+| mybatis-plus   | 3.5.2  | 
+| IJPay          | 2.9.6  | 
+| knife4j        | 4.1.0  | 
+| sa-token       | 1.34.0 | 
+| weixin-java-mp | 4.4.0  | 
+
+
+
+## 模块说明
+
+|   C 端源码    |  服务端     |
+| :---        |    :----:   |  
+|    genius_web   |  ai-mechanician   |
 
 
 ## 部署教程
@@ -27,7 +71,7 @@
 ### 2.初始化SQL
 将ai-mechanician/sql/ai-mechanician.sql导入到mysql中
 
-### 3.页面部署 
+### 3.页面部署
 :link: https://be.apeto.cn/archives/ye-mian-bu-shu
 
 ### 4.服务端部署
@@ -69,59 +113,15 @@ docker-compose -f docker-compose.yaml logs
 :link: https://www.gaojinglin.vip/archives/genius-web%E5%89%8D%E7%AB%AF%E9%A1%B9%E7%9B%AE%E8%AF%B4%E6%98%8E
 
 
-## 模块说明
 
-|   C 端源码    |  服务端     |
-| :---        |    :----:   |  
-|    genius_web   |  ai-mechanician   |
+## 💬 加入我们
 
-## 前端示例
+### ⭐️ 不要吝啬你的star 会持续更新 为了方便找到此项目 可以点一下小星星
 
-> 公众号交互
+|  GPT商业版开源讨论群    | 作者微信 如果二维码过期请加我好友 |
+| :---        |    :----:  |
+|  <img src="https://github.com/apeto2/gpt-commercial/assets/131843341/2d3ea9d6-156f-48af-9c3e-8061d49adda7?raw=true" alt="图片替换文本" width="200" height="250" align="bottom" />     |  <img src="https://github.com/apeto2/gpt-commercial/assets/131843341/b6a8b5e2-4448-4e03-9335-9252eb55467b" alt="图片替换文本" width="210" height="250" align="bottom" />     | 
 
-<img src="https://github.com/apeto2/gpt-commercial/assets/131843341/73e87373-e707-4079-8a8e-8a3518450ef4?raw=true" alt="图片替换文本" width="200" height="450" align="bottom" />
-
-
-> 旅游攻略
-
-[![旅游攻略](http://be.apeto.cn/upload/image-qslc.png "Shiprock")](https://be.apeto.cn/archives/shang-ye-ban-chatgpt)
-
-> 产品经理
-
-[![产品经理](http://be.apeto.cn/upload/c%E7%AB%AF.png "Shiprock")](https://be.apeto.cn/archives/shang-ye-ban-chatgpt)
-> 会员购买
-
-[![会员购买](http://be.apeto.cn/upload/image-eksc.png "Shiprock")](https://be.apeto.cn/archives/shang-ye-ban-chatgpt)
-> 个人信息
-
-[![个人信息](http://be.apeto.cn/upload/image-qumb.png "Shiprock")](https://be.apeto.cn/archives/shang-ye-ban-chatgpt)
-
-## 集成框架
-
-| 框架             |   版本   | 
-|:---------------|:------:|
-| springboot     | 2.7.0  | 
-| redisson       | 3.17.0 | 
-| mybatis-plus   | 3.5.2  | 
-| IJPay          | 2.9.6  | 
-| knife4j        | 4.1.0  | 
-| sa-token       | 1.34.0 | 
-| weixin-java-mp | 4.4.0  | 
-
-## 部署要求
-1. MySQL 5.7及以上
-2. Redis 6以上
-3. JDK8
-
-## 功能
-1. openai所有接口的对接
-2. 超长token优化及网络速度优化
-3. 支付宝当面付对接，可用来支付会员卡
-4. 微信公众号对接，包括公众号关注监听，取关监听，地理位置监听，扫码事件监听，菜单监听
-5. 登录方式： 微信授权登录/邮箱登录/短信登录(阿里云短信服务)
-6. AI角色赋能
-7. 会员卡功能
-8. 反馈与建议
 
 
 ## :100: 以下为plus收费版
