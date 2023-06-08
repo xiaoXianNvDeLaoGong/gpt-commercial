@@ -58,9 +58,7 @@ module.exports = {
     hot: true,
     proxy: {
       "/api": {
-        // target: "https://106.38.108.72:18088", //测试环境
-        // target: "http://10.10.200.119:8888",
-        target: "http://101.42.13.92:8080/",
+        target: "你的ip,或者域名",
         changeOrigin: true,
         secure: false,
       },
