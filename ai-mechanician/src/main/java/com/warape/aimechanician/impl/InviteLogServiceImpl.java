@@ -55,6 +55,10 @@ public class InviteLogServiceImpl extends ServiceImpl<InviteLogMapper, InviteLog
         return;
       }
       MemberCard memberCard = memberCardService.getByCardCode("invite01");
+      if(memberCard == null){
+        log.info("邀请有礼卡不存在");
+        return;
+      }
       exchangeCardDetailService.exchange(inviteUserId, memberCard);
 
       InviteLog inviteLog = new InviteLog();

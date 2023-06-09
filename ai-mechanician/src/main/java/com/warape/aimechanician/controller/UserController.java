@@ -1,10 +1,5 @@
 package com.warape.aimechanician.controller;
 
-import java.io.IOException;
-
-import javax.servlet.ServletOutputStream;
-import javax.servlet.http.HttpServletResponse;
-
 import cn.dev33.satoken.stp.StpUtil;
 import cn.hutool.captcha.CaptchaUtil;
 import cn.hutool.captcha.LineCaptcha;
@@ -38,13 +33,11 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 
 /**
  * @author wanmingyu
@@ -164,9 +157,11 @@ public class UserController {
     if (!smsCode.equals(smsSignUpDto.getSmsCode())) {
       return ResponseResultGenerator.result(CommonRespCode.SMS_CODE_ERROR);
     }
-    userInfoService.doSmsSignUp(accountNum, password, type);
+    Long signUpUserId = userInfoService.doSmsSignUp(accountNum, password, type);
+    String token = StpUtil.createLoginSession(signUpUserId);
+    inviteLogService.inviteHandler(smsSignUpDto.getInviteCode(), signUpUserId);
     StringRedisUtils.delete(key);
-    return ResponseResultGenerator.success();
+    return ResponseResultGenerator.success(token);
   }
 
   @Operation(summary = "登录")
@@ -193,7 +188,6 @@ public class UserController {
     }
     Long userId = userInfo.getId();
     String token = StpUtil.createLoginSession(userId);
-    inviteLogService.inviteHandler(loginDto.getInviteCode(), userId);
     return ResponseResultGenerator.success(token);
   }
 

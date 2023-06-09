@@ -1,10 +1,10 @@
 package com.warape.aimechanician.domain.dto;
 
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
+
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 /**
  * @author wanmingyu
@@ -28,5 +28,7 @@ public class SmsSignUpDto {
   private String smsCode;
   @NotBlank
   private String password;
+  @Schema(description = "邀请Code")
+  private String inviteCode;
 
 }
