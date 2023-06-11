@@ -73,7 +73,7 @@ public class ChatQuestionsController {
 //        throw new SseEmitterException(MEMBER_EXP);
 //      }
 
-      if (exchangeCardDetailService.getSurplusCount(userId) == 0) {
+      if (exchangeCardDetailService.getSurplusCount(userId) <= 0) {
         throw new SseEmitterException(MEMBER_LIMIT_COUNT);
       }
       OpenAISSEEventSourceListener openAIEventSourceListener = new OpenAISSEEventSourceListener(sseEmitter);

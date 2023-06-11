@@ -116,8 +116,6 @@ public class WechatController {
     WxOAuth2UserInfo wxMpUser = wxMpService.getOAuth2Service().getUserInfo(wxOAuth2AccessToken, null);
     Long userId = userInfoService.getOrCreateWechatUser(wxMpUser);
     StpUtil.login(userId);
-    MemberCard memberCard = memberCardService.getByCardCode("register01");
-    exchangeCardDetailService.exchange(userId, memberCard);
     inviteLogService.inviteHandler(wechatLoginReq.getInviteCode(), userId);
     SaTokenInfo saTokenInfo = StpUtil.getTokenInfo();
     TokenInfoVo tokenInfo = new TokenInfoVo();
