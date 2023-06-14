@@ -134,14 +134,7 @@ docker-compose -f docker-compose.yaml logs
 ## :link: 说明文档 https://be.apeto.cn/archives/shang-ye-ban-chatgpt
 > 项目快到飞起~可自行体验
 
-## 后台管理系统示例
+## 后台管理系统说明文档
 
-> 仪表盘总览
+:link: https://be.apeto.cn/archives/genius-ai-hou-tai-guan-li-xi-tong-shi-yong-shuo-ming
 
-[![仪表盘总览](http://be.apeto.cn/upload/image-opti.png "Shiprock")](https://be.apeto.cn/archives/shang-ye-ban-chatgpt)
-> ChatGTP参数配置
-
-[![ChatGTP参数配置](http://be.apeto.cn/upload/image-sbvr.png "Shiprock")](https://be.apeto.cn/archives/shang-ye-ban-chatgpt)
-> 站点配置
-> 
-[![站点配置](http://be.apeto.cn/upload/image-dbej.png "Shiprock")](https://be.apeto.cn/archives/shang-ye-ban-chatgpt)
