@@ -116,7 +116,7 @@ public class ChatDetailLogServiceImpl extends ServiceImpl<ChatDetailLogMapper, C
 
     // 提问放入缓存
     for (String splitStr : StrUtil.split(prompt, Constants.CONTEXT_SPLIT)) {
-      StringRedisUtils.add(redisKey, JSONUtil.toJsonStr(new Message(Role.USER.getName(), splitStr, userId.toString())), askUserEntity.getId());
+      StringRedisUtils.add(redisKey, JSONUtil.toJsonStr(new Message(Role.USER.getName(), splitStr, userId.toString(),null)), askUserEntity.getId());
     }
 
     ChatDetailLog answerEntity = new ChatDetailLog();
@@ -130,7 +130,7 @@ public class ChatDetailLogServiceImpl extends ServiceImpl<ChatDetailLogMapper, C
     // 回答放入缓存
     for (String splitStr : StrUtil.split(msg, Constants.CONTEXT_SPLIT)) {
 
-      StringRedisUtils.add(redisKey, JSONUtil.toJsonStr(new Message(Role.ASSISTANT.getName(), splitStr, userId.toString())), answerEntity.getId());
+      StringRedisUtils.add(redisKey, JSONUtil.toJsonStr(new Message(Role.ASSISTANT.getName(), splitStr, userId.toString(),null)), answerEntity.getId());
     }
 
     Integer consumeCount = 1;
@@ -161,7 +161,7 @@ public class ChatDetailLogServiceImpl extends ServiceImpl<ChatDetailLogMapper, C
         String content = chatDetailLog.getContent();
         String chatRole = chatDetailLog.getChatRole();
         for (String splitContent : StrUtil.split(content, CONTEXT_SPLIT)) {
-          Message message = new Message(chatRole, splitContent, userId.toString());
+          Message message = new Message(chatRole, splitContent, userId.toString(),null);
           if (messages.size() >= limit) {
             break;
           }
