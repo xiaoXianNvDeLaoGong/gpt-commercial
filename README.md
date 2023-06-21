@@ -131,10 +131,9 @@ docker-compose -f docker-compose.yaml logs
 
 ## :link: 演示地址 https://chat.apeto.cn
 
+## :link: 后台管理演示地址:  http://chatadmin1.warape.top/  
+账号: admin  密码: 123456
+
 ## :link: 说明文档 https://be.apeto.cn/archives/shang-ye-ban-chatgpt
 > 项目快到飞起~可自行体验
-
-## 后台管理系统说明文档
-
-:link: https://be.apeto.cn/archives/genius-ai-hou-tai-guan-li-xi-tong-shi-yong-shuo-ming
 
