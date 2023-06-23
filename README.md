@@ -19,6 +19,7 @@
 8. 反馈与建议
 
 
+
 ## 前端示例
 
 > 公众号交互
@@ -89,7 +90,7 @@ services:
   gpt-commercial:
     container_name: gpt-commercial
     network_mode: "host"
-    image: registry.cn-hangzhou.aliyuncs.com/warape/gpt-commercial:v1.0.0
+    image: registry.cn-hangzhou.aliyuncs.com/warape/gpt-commercial:v1.0.2
     volumes:
       - /www/wwwroot/docker/gpt-commercial/config:/home/spring/config  #config映射目录
       - /www/wwwroot/docker/gpt-commercial/logs:/home/spring/logs     #logs映射目录
@@ -120,7 +121,7 @@ docker-compose -f docker-compose.yaml logs
 
 |  GPT商业版开源讨论群    | 作者微信 如果二维码过期请加我好友 |
 | :---        |    :----:  |
-|  <img src="https://github.com/apeto2/gpt-commercial/assets/131843341/2d3ea9d6-156f-48af-9c3e-8061d49adda7?raw=true" alt="图片替换文本" width="200" height="250" align="bottom" />     |  <img src="https://github.com/apeto2/gpt-commercial/assets/131843341/b6a8b5e2-4448-4e03-9335-9252eb55467b" alt="图片替换文本" width="210" height="250" align="bottom" />     | 
+|  <img src="https://github.com/apeto2/gpt-commercial/assets/131843341/91e1ddad-20ff-46c1-be4b-fe81436bf38d?raw=true" alt="图片替换文本" width="200" height="250" align="bottom" />     |  <img src="https://github.com/apeto2/gpt-commercial/assets/131843341/b6a8b5e2-4448-4e03-9335-9252eb55467b" alt="图片替换文本" width="210" height="250" align="bottom" />     | 
 
 
 
@@ -130,17 +131,9 @@ docker-compose -f docker-compose.yaml logs
 
 ## :link: 演示地址 https://chat.apeto.cn
 
+## :link: 后台管理演示地址:  http://chatadmin1.warape.top/  
+账号: admin  密码: 123456
+
 ## :link: 说明文档 https://be.apeto.cn/archives/shang-ye-ban-chatgpt
 > 项目快到飞起~可自行体验
 
-## 后台管理系统示例
-
-> 仪表盘总览
-
-[![仪表盘总览](http://be.apeto.cn/upload/image-opti.png "Shiprock")](https://be.apeto.cn/archives/shang-ye-ban-chatgpt)
-> ChatGTP参数配置
-
-[![ChatGTP参数配置](http://be.apeto.cn/upload/image-sbvr.png "Shiprock")](https://be.apeto.cn/archives/shang-ye-ban-chatgpt)
-> 站点配置
-> 
-[![站点配置](http://be.apeto.cn/upload/image-dbej.png "Shiprock")](https://be.apeto.cn/archives/shang-ye-ban-chatgpt)
