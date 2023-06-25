@@ -74,9 +74,9 @@
 
 ## 模块说明
 
-|   C 端源码    |  B 端源码     |  服务端     |
-| :---        |    :----:   |   :----:   |  
-|    genius_web   |  genius-admin  | ai-mechanician   |
+|   C 端源码    |  服务端     | 后台管理页面 |
+| :---        |    :----:   |:------:| 
+|    [genius-web](genius-web)   |  [ai-mechanician](ai-mechanician)   |   [genius-admin](genius-admin)     |
 
 
 ## 部署教程

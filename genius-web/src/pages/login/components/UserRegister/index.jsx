@@ -4,7 +4,7 @@
  * @Autor: jinglin.gao
  * @Date: 2023-04-08 10:06:25
  * @LastEditors: jinglin.gao
- * @LastEditTime: 2023-04-23 20:36:23
+ * @LastEditTime: 2023-05-24 16:28:45
  */
 import React, {
   useState,
@@ -44,6 +44,8 @@ const UserRegister = forwardRef((props, ref) => {
   // 邮箱账号
   const [mailNumber, setMailNumber] = useState("");
 
+  // 注册类型
+  const rigistType = useRef("");
   // 监听图片验证码变化后 调用短信发送
   useEffect(() => {
     if (imgVerificationCode) {
@@ -51,6 +53,13 @@ const UserRegister = forwardRef((props, ref) => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [imgVerificationCode]);
+
+  useEffect(() => {
+    if (countdownSmsTimerRef.current) {
+      clearInterval(countdownSmsTimerRef.current);
+    }
+  }, []);
+
   useImperativeHandle(ref, () => {
     return {
       getPage,
@@ -62,8 +71,9 @@ const UserRegister = forwardRef((props, ref) => {
    * @return {*}
    * @author: jinglin.gao
    */
-  const getPage = () => {
+  const getPage = (type) => {
     setPageState(true);
+    rigistType.current = type; // 设置绑定的类型
   };
 
   /**
@@ -85,13 +95,13 @@ const UserRegister = forwardRef((props, ref) => {
     if (!mailNumber) {
       messageFn({
         type: "error",
-        content: "请输入邮箱账号",
+        content: "请输入账号",
       });
 
       return;
     }
 
-    userAttestationRef.current.getPage();
+    userAttestationRef.current.getPage(rigistType.current);
   };
 
   /**
@@ -104,13 +114,13 @@ const UserRegister = forwardRef((props, ref) => {
       let data = {
         sendAccount: mailNumber,
         type: "1",
-        sendType: 1,
+        sendType: rigistType.current,
       };
       let res = await sendSms(data);
       if (res.code === 200) {
         messageFn({
           type: "success",
-          content: "验证码发送成功,请在邮箱中查收",
+          content: "验证码发送成功",
         });
         setSmsState(true);
         // 60S打倒计时
@@ -134,11 +144,15 @@ const UserRegister = forwardRef((props, ref) => {
       clearInterval(countdownSmsTimerRef.current);
     }
     let count = 60;
+    setCountdownSmsTimer(60);
     countdownSmsTimerRef.current = setInterval(() => {
       count--;
 
       if (count <= 0) {
         setSmsState(false);
+        if (countdownSmsTimerRef.current) {
+          clearInterval(countdownSmsTimerRef.current);
+        }
       }
       setCountdownSmsTimer(count);
     }, 1000);
@@ -154,7 +168,7 @@ const UserRegister = forwardRef((props, ref) => {
     } else if (!smsVerificationCode) {
       messageFn({
         type: "error",
-        content: "请输入邮箱验证码",
+        content: "请输入验证码",
       });
       return;
     } else if (!password) {
@@ -163,12 +177,18 @@ const UserRegister = forwardRef((props, ref) => {
         content: "请输入密码",
       });
       return;
+    } else if (password.length < 6) {
+      messageFn({
+        type: "error",
+        content: "密码长度需大于6位",
+      });
+      return;
     }
 
     try {
       let data = {
         accountNum: mailNumber,
-        type: 1,
+        type: rigistType.current,
         imageVerificationCode: imgVerificationCode,
         smsCode: smsVerificationCode,
         password: password,
@@ -178,7 +198,7 @@ const UserRegister = forwardRef((props, ref) => {
         hidePage();
         messageFn({
           type: "success",
-          content: "恭喜您，注册成功,快使用邮箱登录吧",
+          content: "恭喜您，注册成功",
         });
       } else {
         messageFn({
@@ -195,7 +215,7 @@ const UserRegister = forwardRef((props, ref) => {
     <>
       {pageState ? (
         <div className={styles.custom_dialog}>
-          <div className="custom_dialog-warp">
+          <div className="custom_dialog-warp animate__animated animate__flipInX">
             <div className="custom_dialog-head">
               <span className="title">注册账号</span>
               <CloseOutlined
@@ -211,7 +231,7 @@ const UserRegister = forwardRef((props, ref) => {
                   maxLength={30}
                   value={mailNumber}
                   onChange={(e) => setMailNumber(e.target.value)}
-                  placeholder="请输入邮箱账号"
+                  placeholder="请输入账号"
                 />
               </div>
               <div className="verification_code-item">
@@ -255,7 +275,7 @@ const UserRegister = forwardRef((props, ref) => {
 
           <UserAttestation
             setImgVerificationCode={setImgVerificationCode}
-            phoneNumber={phoneNumber}
+            phoneNumber={mailNumber}
             ref={userAttestationRef}
           ></UserAttestation>
         </div>

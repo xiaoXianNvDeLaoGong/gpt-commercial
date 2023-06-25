@@ -28,5 +28,5 @@ public interface ExchangeCardDetailService extends IService<ExchangeCardDetail> 
   List<ExchangeCardDetail> selectExpire ();
 
 
-  boolean checkGive (UserInfo userInfo, MemberCard memberCard);
+  boolean checkGive (Long userId, MemberCard memberCard);
 }

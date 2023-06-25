@@ -2,10 +2,14 @@ package com.warape.aimechanician.impl;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
+import cn.hutool.core.date.DateTime;
+import cn.hutool.core.date.DateUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.warape.aimechanician.domain.Constants.PayStateEnum;
+import com.warape.aimechanician.domain.vo.TrendVO;
 import com.warape.aimechanician.entity.MemberCard;
 import com.warape.aimechanician.entity.PaymentInfo;
 import com.warape.aimechanician.mapper.PaymentInfoMapper;
@@ -41,7 +45,7 @@ public class PaymentInfoServiceImpl extends ServiceImpl<PaymentInfoMapper, Payme
 
   @Override
   @Transactional(rollbackFor = Exception.class)
-  public void callbackHandler (BigDecimal payAmount, String outPaySn, String paySn, PayStateEnum sysPayStateEnum, Date payTime) {
+  public void callbackHandler (String outPaySn, String paySn, PayStateEnum sysPayStateEnum, Date payTime) {
     LambdaQueryWrapper<PaymentInfo> queryWrapper = new LambdaQueryWrapper<>();
     queryWrapper.eq(PaymentInfo::getPaySn, paySn);
     PaymentInfo paymentInfo = baseMapper.selectOne(queryWrapper);
@@ -51,8 +55,32 @@ public class PaymentInfoServiceImpl extends ServiceImpl<PaymentInfoMapper, Payme
     if (!updateById(paymentInfo)) {
       throw new RuntimeException("修改订单状态失败:" + paySn);
     }
-    MemberCard memberCard = memberCardService.getByCardCode(paymentInfo.getGoodsCode());
-    exchangeCardDetailService.exchange(paymentInfo.getUserId(), memberCard);
+    if (sysPayStateEnum.equals(PayStateEnum.SUCCESS)) {
+      MemberCard memberCard = memberCardService.getByCardCode(paymentInfo.getGoodsCode());
+      exchangeCardDetailService.exchange(paymentInfo.getUserId(), memberCard);
+    }
+  }
 
+  @Override
+  public List<TrendVO<Integer>> trend (Integer day, Integer payState) {
+    Date end = new Date();
+    DateTime start = DateUtil.offsetDay(end, -day);
+    if (day == 0) {
+      start = DateUtil.beginOfDay(end);
+      end = DateUtil.endOfDay(end);
+    }
+
+    return baseMapper.trend(start, end, payState);
+  }
+
+  @Override
+  public List<TrendVO<BigDecimal>> payAmountTrend (Integer day) {
+    Date end = new Date();
+    DateTime start = DateUtil.offsetDay(end, -day);
+    if (day == 0) {
+      start = DateUtil.beginOfDay(end);
+      end = DateUtil.endOfDay(end);
+    }
+    return baseMapper.payAmountTrend(start, end);
   }
 }

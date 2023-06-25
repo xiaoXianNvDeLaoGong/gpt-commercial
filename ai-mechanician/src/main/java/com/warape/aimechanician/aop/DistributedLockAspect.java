@@ -20,7 +20,7 @@ import org.springframework.stereotype.Component;
  * 分布式锁拦截：自定义注解支持SPEL
  * </p>
  *
- * @author wanmingyu
+ * @author apeto
  */
 @Aspect
 @Component

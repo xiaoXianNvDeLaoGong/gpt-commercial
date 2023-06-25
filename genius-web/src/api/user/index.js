@@ -4,7 +4,7 @@
  * @Autor: jinglin.gao
  * @Date: 2023-04-06 09:30:54
  * @LastEditors: jinglin.gao
- * @LastEditTime: 2023-04-17 09:17:39
+ * @LastEditTime: 2023-05-17 17:18:06
  */
 import request from "@/request/index.js";
 
@@ -60,5 +60,13 @@ export function updatePassword(data) {
         url: "/api/user/updatePassword",
         method: "post",
         data
+    });
+}
+
+// 查询导航列表
+export function getNavList() {
+    return request({
+        url: "/api/topBarConfig/list",
+        method: "get",
     });
 }

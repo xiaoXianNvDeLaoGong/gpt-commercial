@@ -27,11 +27,11 @@
       <artifactId>jackson-dataformat-xml</artifactId>
     </dependency>
 
-    <dependency>
-      <groupId>com.unfbx</groupId>
-      <artifactId>chatgpt-java</artifactId>
-      <version>1.0.14-beta1</version>
-    </dependency>
+<!--    <dependency>-->
+<!--      <groupId>com.unfbx</groupId>-->
+<!--      <artifactId>chatgpt-java</artifactId>-->
+<!--      <version>1.0.13</version>-->
+<!--    </dependency>-->
     <dependency>
       <groupId>com.zaxxer</groupId>
       <artifactId>HikariCP</artifactId>
@@ -172,6 +172,13 @@
       <artifactId>weixin-java-mp</artifactId>
       <version>4.5.0</version>
     </dependency>
+    <dependency>
+      <groupId>com.apeto</groupId>
+      <artifactId>chatgpt-java-business</artifactId>
+      <version>1.0.1</version>
+      <scope>system</scope>
+      <systemPath>${project.basedir}/lib/chatgpt-java-business-1.0.1.jar</systemPath>
+    </dependency>
   </dependencies>
   <dependencyManagement>
     <dependencies>
@@ -210,6 +217,7 @@
         <artifactId>spring-boot-maven-plugin</artifactId>
         <version>2.7.0</version>
         <configuration>
+          <includeSystemScope>true</includeSystemScope>
         </configuration>
         <executions>
           <execution>
@@ -220,6 +228,15 @@
         </executions>
       </plugin>
     </plugins>
+<!--    <resources>-->
+<!--      <resource>-->
+<!--        <directory>lib</directory>-->
+<!--        <targetPath>/BOOT-INF/lib/</targetPath>-->
+<!--        <includes>-->
+<!--          <include>**/*.jar</include>-->
+<!--        </includes>-->
+<!--      </resource>-->
+<!--    </resources>-->
   </build>
   <repositories>
     <repository>

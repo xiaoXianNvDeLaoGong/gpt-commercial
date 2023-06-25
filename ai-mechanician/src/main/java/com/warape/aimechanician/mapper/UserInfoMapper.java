@@ -1,8 +1,13 @@
 package com.warape.aimechanician.mapper;
 
-import com.warape.aimechanician.entity.UserInfo;
+import java.util.Date;
+import java.util.List;
+
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.warape.aimechanician.domain.vo.TrendVO;
+import com.warape.aimechanician.entity.UserInfo;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 /**
  * <p>
@@ -15,4 +20,5 @@ import org.apache.ibatis.annotations.Mapper;
 @Mapper
 public interface UserInfoMapper extends BaseMapper<UserInfo> {
 
+  List<TrendVO> trend (@Param("start") Date start, @Param("end") Date end);
 }

@@ -3,6 +3,8 @@ package com.warape.aimechanician.utils;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
+import com.google.gson.Gson;
+
 import cn.hutool.core.map.MapUtil;
 import cn.hutool.extra.spring.SpringUtil;
 import cn.hutool.json.JSONUtil;
@@ -14,11 +16,13 @@ import com.aliyun.sdk.service.dysmsapi20170525.models.SendSmsResponse;
 import com.aliyun.sdk.service.dysmsapi20170525.models.SendSmsResponseBody;
 import com.warape.aimechanician.config.properties.AliSmsProperties;
 import darabonba.core.client.ClientOverrideConfiguration;
+import lombok.extern.slf4j.Slf4j;
 
 /**
- * @author wanmingyu
+ * @author apeto
  * @create 2023/4/17 14:03
  */
+@Slf4j
 public class SmsUtils {
 
 
@@ -60,8 +64,8 @@ public class SmsUtils {
     // Synchronously get the return value of the API request
     SendSmsResponse resp = response.get();
     SendSmsResponseBody sendSmsResponseBody = resp.getBody();
+    log.info("短信发送结果信息:{}",JSONUtil.toJsonStr(sendSmsResponseBody));
     boolean result = sendSmsResponseBody != null && sendSmsResponseBody.getCode().equals("OK");
-//    System.out.println(new Gson().toJson(resp));
     // Asynchronous processing of return values
         /*response.thenAccept(resp -> {
             System.out.println(new Gson().toJson(resp));

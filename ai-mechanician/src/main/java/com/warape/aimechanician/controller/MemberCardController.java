@@ -2,12 +2,11 @@ package com.warape.aimechanician.controller;
 
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import cn.dev33.satoken.stp.StpUtil;
 import cn.hutool.core.date.DateUtil;
-import com.warape.aimechanician.config.properties.MemberConfigProperties;
 import com.warape.aimechanician.domain.Constants.MemberPermissionTypeEnum;
 import com.warape.aimechanician.domain.ResponseResult;
 import com.warape.aimechanician.domain.ResponseResultGenerator;
@@ -15,9 +14,11 @@ import com.warape.aimechanician.domain.vo.MemberCardVo;
 import com.warape.aimechanician.domain.vo.MemberUserInfo;
 import com.warape.aimechanician.entity.ExchangeCardDetail;
 import com.warape.aimechanician.entity.MemberCard;
+import com.warape.aimechanician.entity.MemberRights;
 import com.warape.aimechanician.entity.UserInfo;
 import com.warape.aimechanician.service.ExchangeCardDetailService;
 import com.warape.aimechanician.service.MemberCardService;
+import com.warape.aimechanician.service.MemberRightsService;
 import com.warape.aimechanician.service.UserInfoService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -42,7 +43,7 @@ public class MemberCardController {
   @Autowired
   private MemberCardService memberCardService;
   @Autowired
-  private MemberConfigProperties memberConfigProperties;
+  private MemberRightsService memberRightsService;
   @Autowired
   private ExchangeCardDetailService exchangeCardDetailService;
   @Autowired
@@ -53,15 +54,21 @@ public class MemberCardController {
   public ResponseResult<List<MemberCardVo>> members () {
     List<MemberCard> memberCards = memberCardService.selectByViewType(MemberPermissionTypeEnum.VIEW);
     List<MemberCardVo> result = memberCards.stream().map(memberCard -> {
-      MemberCardVo vo = new MemberCardVo();
-      vo.setCardName(memberCard.getCardName());
-      vo.setAmount(memberCard.getAmount());
-      vo.setCardDay(memberCard.getCardDay());
-      vo.setMemberId(memberCard.getId());
-      Map<String, Integer> rights = memberConfigProperties.getRights();
-      vo.setLimitCount(rights.getOrDefault(memberCard.getCardCode(), -1));
-      return vo;
-    }).collect(Collectors.toList());
+
+      MemberRights memberRights = memberRightsService.getByMemberCode(memberCard.getCardCode());
+      if (memberRights != null) {
+        MemberCardVo vo = new MemberCardVo();
+        vo.setCardName(memberCard.getCardName());
+        vo.setAmount(memberCard.getAmount());
+        vo.setCardDay(memberCard.getCardDay());
+        vo.setMemberId(memberCard.getId());
+        vo.setLimitCount(memberRights.getCount());
+        return vo;
+      }else {
+        return null;
+      }
+
+    }).filter(Objects::nonNull).collect(Collectors.toList());
     return ResponseResultGenerator.success(result);
   }
 

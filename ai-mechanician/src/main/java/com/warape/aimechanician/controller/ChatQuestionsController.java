@@ -9,6 +9,7 @@ import com.unfbx.chatgpt.OpenAiStreamClient;
 import com.unfbx.chatgpt.entity.chat.ChatCompletion;
 import com.unfbx.chatgpt.exception.BaseException;
 import com.warape.aimechanician.annotations.DistributedLock;
+import com.warape.aimechanician.domain.ChatConfigEntity;
 import com.warape.aimechanician.domain.CommonRespCode;
 import com.warape.aimechanician.domain.ResponseResultGenerator;
 import com.warape.aimechanician.domain.SystemConstants.RedisKeyEnum;
@@ -17,6 +18,7 @@ import com.warape.aimechanician.listener.OpenAISSEEventSourceListener;
 import com.warape.aimechanician.service.ChatDetailLogService;
 import com.warape.aimechanician.service.ExchangeCardDetailService;
 import com.warape.aimechanician.service.UserInfoService;
+import com.warape.aimechanician.utils.StringRedisUtils;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
@@ -32,7 +34,7 @@ import static com.warape.aimechanician.domain.Constants.ResponseEnum.MEMBER_LIMI
 import static com.warape.aimechanician.domain.Constants.ResponseEnum.NOT_LOGIN;
 
 /**
- * @author wanmingyu
+ * @author apeto
  * @create 2023/3/27 11:23
  */
 @Slf4j
@@ -73,16 +75,22 @@ public class ChatQuestionsController {
 //        throw new SseEmitterException(MEMBER_EXP);
 //      }
 
-      if (exchangeCardDetailService.getSurplusCount(userId) <= 0) {
+      if (exchangeCardDetailService.getSurplusCount(userId) == 0) {
         throw new SseEmitterException(MEMBER_LIMIT_COUNT);
       }
       OpenAISSEEventSourceListener openAIEventSourceListener = new OpenAISSEEventSourceListener(sseEmitter);
       openAIEventSourceListener.setOnComplate(msg -> chatDetailLogService.questionsCompleted(reqId, userId, prompt, msg));
 
+      ChatConfigEntity chatConfigEntity = JSONUtil.toBean(StringRedisUtils.get(RedisKeyEnum.CHAT_CONFIG.getKey()), ChatConfigEntity.class);
       ChatCompletion completion = ChatCompletion
           .builder()
           .messages(chatDetailLogService.getMessage(userId, reqId, prompt))
-          .model(ChatCompletion.Model.GPT_3_5_TURBO.getName())
+          .temperature(chatConfigEntity.getTemperature())
+          .maxTokens(chatConfigEntity.getMaxTokens())
+          .frequencyPenalty(chatConfigEntity.getFrequencyPenalty())
+          .presencePenalty(chatConfigEntity.getPresencePenalty())
+          .model(chatConfigEntity.getModel())
+//          .model(Model.GPT_3_5_TURBO.getName())
           .build();
       openAiStreamClient.streamChatCompletion(completion, openAIEventSourceListener);
     } catch (SseEmitterException e) {
@@ -104,6 +112,7 @@ public class ChatQuestionsController {
 
     return sseEmitter;
   }
+
 //
 //  @Operation(description = "停止提问")
 //  @GetMapping("/complete")

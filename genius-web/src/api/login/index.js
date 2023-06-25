@@ -4,13 +4,14 @@
  * @Autor: jinglin.gao
  * @Date: 2023-04-02 10:33:59
  * @LastEditors: jinglin.gao
- * @LastEditTime: 2023-04-13 12:34:31
+ * @LastEditTime: 2023-05-06 23:25:15
  */
 import request from "@/request/index.js";
-export function authorizationUrl() {
+export function authorizationUrl(params) {
     return request({
         url: "/api/wechat/authorizationUrl",
         method: "get",
+        params
     });
 }
 
@@ -78,6 +79,32 @@ export function smsSignUp(data) {
 export function userLogin(data) {
     return request({
         url: "/api/user/login",
+        method: "post",
+        data,
+    });
+}
+// 系统配置
+export function systemConfig() {
+    return request({
+        url: "/api/web/setting",
+        method: "get",
+    });
+}
+
+
+// wx轮询查询登录状态
+export function wxLoginState(params) {
+    return request({
+        url: "/api/wechat/loginState",
+        method: "get",
+        params
+    });
+}
+
+// 图片验证码
+export function checkImageCode(data) {
+    return request({
+        url: "/api/user/checkImageCode",
         method: "post",
         data,
     });

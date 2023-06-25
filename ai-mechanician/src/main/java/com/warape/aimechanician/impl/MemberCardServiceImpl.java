@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.warape.aimechanician.domain.Constants.MemberPermissionTypeEnum;
+import com.warape.aimechanician.domain.Constants.MemberStateEnum;
 import com.warape.aimechanician.entity.MemberCard;
 import com.warape.aimechanician.mapper.MemberCardMapper;
 import com.warape.aimechanician.service.MemberCardService;
@@ -25,6 +26,7 @@ public class MemberCardServiceImpl extends ServiceImpl<MemberCardMapper, MemberC
   public List<MemberCard> selectByViewType (MemberPermissionTypeEnum view) {
     LambdaQueryWrapper<MemberCard> queryWrapper = new LambdaQueryWrapper<>();
     queryWrapper.eq(MemberCard::getViewType, view.getType());
+    queryWrapper.eq(MemberCard::getCardState, MemberStateEnum.ONLINE.getState());
     queryWrapper.orderByAsc(MemberCard::getCardSort);
     return list(queryWrapper);
   }
@@ -33,6 +35,7 @@ public class MemberCardServiceImpl extends ServiceImpl<MemberCardMapper, MemberC
   public MemberCard getByCardCode (String memberCardCode) {
     LambdaQueryWrapper<MemberCard> queryWrapper = new LambdaQueryWrapper<>();
     queryWrapper.eq(MemberCard::getCardCode, memberCardCode);
+    queryWrapper.eq(MemberCard::getCardState, MemberStateEnum.ONLINE.getState());
     return getOne(queryWrapper);
   }
 }

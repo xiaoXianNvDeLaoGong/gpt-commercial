@@ -2,9 +2,11 @@ package com.warape.aimechanician.service;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.warape.aimechanician.domain.Constants.PayStateEnum;
+import com.warape.aimechanician.domain.vo.TrendVO;
 import com.warape.aimechanician.entity.PaymentInfo;
 
 /**
@@ -19,5 +21,9 @@ public interface PaymentInfoService extends IService<PaymentInfo> {
 
   PaymentInfo getByOrderNo (String orderNo);
 
-  void callbackHandler (BigDecimal payAmount, String outPaySn, String paySn, PayStateEnum sysPayStateEnum, Date payTime);
+  void callbackHandler (String outPaySn, String paySn, PayStateEnum sysPayStateEnum, Date payTime);
+
+  List<TrendVO<Integer>> trend (Integer day, Integer payState);
+
+  List<TrendVO<BigDecimal>> payAmountTrend (Integer day);
 }

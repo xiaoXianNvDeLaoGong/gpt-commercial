@@ -1,9 +1,5 @@
 package com.warape.aimechanician;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-
 import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.generator.FastAutoGenerator;
@@ -12,8 +8,12 @@ import com.baomidou.mybatisplus.generator.config.rules.DateType;
 import com.baomidou.mybatisplus.generator.fill.Column;
 import com.warape.aimechanician.entity.BaseEntity;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
 /**
- * @author wanmingyu
+ * @author apeto
  * @create 2023/3/29 20:05
  */
 public class GenerateCode {
@@ -22,8 +22,8 @@ public class GenerateCode {
     System.setProperty("https.protocols", "TLSv1,TLSv1.1,TLSv1.2,SSLv3");
     //1、配置数据源
     FastAutoGenerator.create(
-            "jdbc:mysql://ip:3306/ai_mechanician?socketTimeout=4000&characterEncoding=UTF-8&zeroDateTimeBehavior=convertToNull&useSSL=false&serverTimezone=Asia/Shanghai",
-            "NAME", "PASSWORD")
+            "jdbc:mysql://你的IP:3306/ai_mechanician?socketTimeout=4000&characterEncoding=UTF-8&zeroDateTimeBehavior=convertToNull&useSSL=false&serverTimezone=Asia/Shanghai",
+            "账号", "密码")
         .globalConfig(builder -> {
           builder.author("warape") // 设置作者名
               .outputDir(System.getProperty("user.dir") + "/src/main/java")   //设置输出路径
@@ -42,7 +42,7 @@ public class GenerateCode {
             .pathInfo(Collections.singletonMap(OutputFile.xml, System.getProperty("user.dir") + "/src/main/resources/mapper")))
         .strategyConfig(builder ->
             builder
-                .addInclude(getTables("advertise_config")) // 设置需要生成的表名 可边长参数“user”, “user1”
+                .addInclude(getTables("member_rights")) // 设置需要生成的表名 可边长参数“user”, “user1”
 //            .addTablePrefix("tb_", "c_") // 设置过滤表前缀
                 .serviceBuilder()//service策略配置
                 .formatServiceFileName("%sService")

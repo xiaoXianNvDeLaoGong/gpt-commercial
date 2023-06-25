@@ -6,7 +6,6 @@ import cn.dev33.satoken.stp.SaTokenInfo;
 import cn.dev33.satoken.stp.StpUtil;
 import cn.hutool.core.util.IdUtil;
 import cn.hutool.core.util.StrUtil;
-import cn.hutool.json.JSONUtil;
 import com.warape.aimechanician.annotations.DistributedLock;
 import com.warape.aimechanician.config.properties.WxMpProperties;
 import com.warape.aimechanician.domain.Constants.ResponseEnum;
@@ -14,6 +13,7 @@ import com.warape.aimechanician.domain.ResponseResult;
 import com.warape.aimechanician.domain.ResponseResultGenerator;
 import com.warape.aimechanician.domain.SystemConstants.RedisKeyEnum;
 import com.warape.aimechanician.domain.dto.WechatLoginReq;
+import com.warape.aimechanician.domain.vo.AuthorizationVO;
 import com.warape.aimechanician.domain.vo.TokenInfoVo;
 import com.warape.aimechanician.entity.MemberCard;
 import com.warape.aimechanician.entity.UserInfo;
@@ -40,7 +40,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
- * @author wanmingyu
+ * @author apeto
  * @create 2023/3/28 11:23
  */
 @Slf4j
@@ -65,15 +65,32 @@ public class WechatController {
 
   @Operation(summary = "获取授权url")
   @GetMapping("/authorizationUrl")
-  public ResponseResult<String> getAuthorizationUrl () {
-//    String authorizationUrl = wxMpService.getOAuth2Service().buildAuthorizationUrl(wxMpProperties.getRedirectUri(), OAuth2Scope.SNSAPI_USERINFO, null);
-//    return ResponseResultGenerator.success(authorizationUrl);
-
+  public ResponseResult<AuthorizationVO> getAuthorizationUrl (String inviteCode) {
     String sceneStr = IdUtil.fastSimpleUUID();
-    StringRedisUtils.setForTimeMIN(RedisKeyEnum.WECHAT_QR_LOGIN_CODE.getKey(sceneStr), Boolean.FALSE.toString(), 10);
+
+    // 认证登录
+//    AuthorizationVO vo = new AuthorizationVO();
+//    String authorizationUrl = wxMpService.getOAuth2Service()
+//        .buildAuthorizationUrl(wxMpProperties.getRedirectUri() + "/api/wechat/wechatLogin?inviteCode=" + inviteCode, OAuth2Scope.SNSAPI_USERINFO, null);
+//    vo.setUrl(authorizationUrl);
+//    vo.setSceneStr(sceneStr);
+//    StringRedisUtils.setForTimeMIN(RedisKeyEnum.WECHAT_QR_LOGIN_CODE.getKey(sceneStr), Boolean.FALSE.toString(), 20);
+//    return ResponseResultGenerator.success(vo);
+
     try {
-      WxMpQrCodeTicket wxMpQrCodeTicket = wxMpService.getQrcodeService().qrCodeCreateTmpTicket(sceneStr, Integer.parseInt(TimeUnit.MINUTES.toSeconds(10) + ""));
-      ResponseResultGenerator.success(wxMpQrCodeTicket.getUrl());
+      if (StrUtil.isNotBlank(inviteCode)) {
+        sceneStr = sceneStr + "@" + inviteCode;
+      }
+      WxMpQrCodeTicket wxMpQrCodeTicket = wxMpService.getQrcodeService()
+          .qrCodeCreateTmpTicket(sceneStr, Integer.parseInt(TimeUnit.MINUTES.toSeconds(10) + ""));
+      AuthorizationVO vo = new AuthorizationVO();
+
+      String ticket = wxMpQrCodeTicket.getTicket();
+      vo.setSceneStr(ticket);
+      vo.setUrl(wxMpQrCodeTicket.getUrl());
+      StringRedisUtils.setForTimeMIN(RedisKeyEnum.WECHAT_QR_LOGIN_CODE.getKey(ticket), Boolean.FALSE.toString(), 10);
+
+      return ResponseResultGenerator.success(vo);
     } catch (Exception e) {
       log.error("getAuthorizationUrl 生成二维码失败", e);
 
@@ -103,19 +120,13 @@ public class WechatController {
   @DistributedLock(prefix = RedisKeyEnum.UPDATE_PASSWORD_LOCK, key = "#wechatLoginReq.getCode()", waitFor = 0)
   public ResponseResult<TokenInfoVo> wechatLogin (@RequestBody @Validated WechatLoginReq wechatLoginReq) throws WxErrorException {
 
-    WxOAuth2AccessToken wxOAuth2AccessToken;
-    String redisKey = RedisKeyEnum.ACCESS_TOKEN.name();
-    String body = StringRedisUtils.get(redisKey);
-    if (StrUtil.isNotBlank(body)) {
-      wxOAuth2AccessToken = JSONUtil.toBean(body, WxOAuth2AccessToken.class);
-    } else {
-      wxOAuth2AccessToken = wxMpService.getOAuth2Service().getAccessToken(wechatLoginReq.getCode());
-      StringRedisUtils.setForTimeMIN(redisKey, JSONUtil.toJsonStr(wxOAuth2AccessToken), 110);
-    }
+    WxOAuth2AccessToken wxOAuth2AccessToken = wxMpService.getOAuth2Service().getAccessToken(wechatLoginReq.getCode());
 
     WxOAuth2UserInfo wxMpUser = wxMpService.getOAuth2Service().getUserInfo(wxOAuth2AccessToken, null);
     Long userId = userInfoService.getOrCreateWechatUser(wxMpUser);
     StpUtil.login(userId);
+    MemberCard memberCard = memberCardService.getByCardCode("register01");
+    exchangeCardDetailService.exchange(userId, memberCard);
     inviteLogService.inviteHandler(wechatLoginReq.getInviteCode(), userId);
     SaTokenInfo saTokenInfo = StpUtil.getTokenInfo();
     TokenInfoVo tokenInfo = new TokenInfoVo();
