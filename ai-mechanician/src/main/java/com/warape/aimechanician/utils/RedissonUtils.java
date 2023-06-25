@@ -8,7 +8,7 @@ import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
 
 /**
- * @author wanmingyu
+ * @author apeto
  * @create 2023/4/7 12:03
  */
 @Slf4j

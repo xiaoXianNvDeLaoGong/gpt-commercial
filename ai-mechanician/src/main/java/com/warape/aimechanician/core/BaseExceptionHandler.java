@@ -178,7 +178,7 @@ public abstract class BaseExceptionHandler<R> {
    */
   @ExceptionHandler(NotLoginException.class)
   public ResponseResult<?> handleException (NotLoginException ex, HttpServletRequest request) {
-    log.error("未登录: requestUri={} errorMsg={}", request.getRequestURI(), ex.getMessage());
+//    log.error("未登录: requestUri={} errorMsg={}", request.getRequestURI(), ex.getMessage());
     return ResponseResultGenerator.result(ResponseEnum.NOT_LOGIN);
   }
 

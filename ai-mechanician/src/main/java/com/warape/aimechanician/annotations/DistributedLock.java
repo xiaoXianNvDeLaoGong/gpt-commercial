@@ -11,7 +11,7 @@ import java.util.concurrent.TimeUnit;
 import com.warape.aimechanician.domain.SystemConstants.RedisKeyEnum;
 
 /**
- * @author wanmingyu
+ * @author apeto
  */
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
@@ -24,36 +24,36 @@ public @interface DistributedLock {
    *
    * @return redis 锁key的前缀
    */
-  RedisKeyEnum prefix ();
+  RedisKeyEnum prefix();
 
   /**
    * 锁的Key，不包含前缀
    *
    * @return
    */
-  String key () default "";
+  String key() default "";
 
   /**
    * 过期秒数,默认为5秒
    *
    * @return 轮询锁的时间
    */
-  int expire () default 5;
+  int expire() default 5;
 
   /**
    * 等待时间
    *
    * @return
    */
-  int waitFor () default 3;
+  int waitFor() default 3;
 
   /**
    * 超时时间单位
    *
    * @return 秒
    */
-  TimeUnit timeUnit () default TimeUnit.SECONDS;
+  TimeUnit timeUnit() default TimeUnit.SECONDS;
 
-  boolean isReqUserId () default false;
+  boolean isReqUserId() default false;
 
 }

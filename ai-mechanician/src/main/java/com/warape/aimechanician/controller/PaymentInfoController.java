@@ -48,7 +48,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/paymentInfo")
 public class PaymentInfoController {
 
-  @Autowired
+  @Autowired(required = false)
   private AlipayClient alipayClient;
   @Autowired
   private AliPayProperties aliPayProperties;

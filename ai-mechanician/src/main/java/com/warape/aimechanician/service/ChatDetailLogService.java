@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.unfbx.chatgpt.entity.chat.Message;
 import com.warape.aimechanician.annotations.MethodInfo;
 import com.warape.aimechanician.domain.vo.SessionRecordVo;
+import com.warape.aimechanician.domain.vo.TrendVO;
 import com.warape.aimechanician.entity.ChatDetailLog;
 
 /**
@@ -35,4 +36,6 @@ public interface ChatDetailLogService extends IService<ChatDetailLog> {
 
   @MethodInfo
   List<Message> getMessage (Long userId, String reqId, String prompt);
+
+  List<TrendVO> trend (Integer day);
 }

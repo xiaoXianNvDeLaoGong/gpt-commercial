@@ -89,8 +89,7 @@ public class OpenAISSEEventSourceListener extends EventSourceListener {
       }
       String content = delta.getContent();
       if (StrUtil.isBlank(content)) {
-        delta.setContent("\n");
-        content="\n";
+        return;
       }
       delta.setRole(Role.ASSISTANT.getName());
       lastMessage += content;
@@ -116,19 +115,25 @@ public class OpenAISSEEventSourceListener extends EventSourceListener {
   @SneakyThrows
   @Override
   public void onFailure (EventSource eventSource, Throwable t, Response response) {
-    if (Objects.isNull(response)) {
-      return;
+    try {
+
+      if (Objects.isNull(response)) {
+        return;
+      }
+      ResponseBody body = response.body();
+      if (Objects.nonNull(body)) {
+        log.error("OpenAI  sse连接异常data：{}，异常：{}", body, t);
+      } else {
+        log.error("OpenAI  sse连接异常data：{}，异常：{}", response, t);
+      }
+    } finally {
+      if (StrUtil.isNotBlank(lastMessage)) {
+        onComplate.accept(lastMessage);
+      }
+      eventSource.cancel();
     }
-    ResponseBody body = response.body();
-    if (Objects.nonNull(body)) {
-      log.error("OpenAI  sse连接异常data：{}，异常：{}", body.string(), t.getMessage());
-    } else {
-      log.error("OpenAI  sse连接异常data：{}，异常：{}", response, t.getMessage());
-    }
-    if (StrUtil.isNotBlank(lastMessage)) {
-      onComplate.accept(lastMessage);
-    }
-    eventSource.cancel();
+
+
   }
 
   /**

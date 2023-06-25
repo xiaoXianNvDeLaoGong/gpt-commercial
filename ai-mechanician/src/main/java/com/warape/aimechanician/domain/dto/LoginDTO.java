@@ -1,18 +1,17 @@
 package com.warape.aimechanician.domain.dto;
 
-import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.Data;
-
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.Data;
+
 /**
- * @author wanmingyu
- * @create 2023/4/11 21:05
+ * @author apeto
+ * @create 2023/4/11 21:25
  */
 @Data
-@Schema(description = "注册")
-public class SmsSignUpDto {
+public class LoginDTO {
 
   @Schema(description = "账号")
   @NotBlank
@@ -22,13 +21,10 @@ public class SmsSignUpDto {
   @NotNull
   private Integer type = 1;
 
-  @NotBlank
-  private String imageVerificationCode;
-  @NotBlank
-  private String smsCode;
+  @Schema(description = "密码")
   @NotBlank
   private String password;
+
   @Schema(description = "邀请Code")
   private String inviteCode;
-
 }

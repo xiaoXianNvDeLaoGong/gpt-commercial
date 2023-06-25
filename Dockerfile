@@ -1,4 +1,4 @@
-FROM williamyeh/java8
+FROM eclipse-temurin:8-jre
 MAINTAINER apeto
 ARG user=spring
 ARG group=spring

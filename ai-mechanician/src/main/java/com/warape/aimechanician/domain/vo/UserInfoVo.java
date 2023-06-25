@@ -6,7 +6,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
 /**
- * @author wanmingyu
+ * @author apeto
  * @create 2023/4/8 7:30 下午
  */
 @Schema(description = "用户信息VO")

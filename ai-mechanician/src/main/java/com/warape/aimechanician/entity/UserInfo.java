@@ -45,4 +45,8 @@ public class UserInfo extends BaseEntity implements Serializable {
   @Schema(description = "用户密码")
   @TableField("user_password")
   private String userPassword;
+
+  @Schema(description = "注册类型")
+  @TableField("register_type")
+  private Integer registerType;
 }

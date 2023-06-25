@@ -36,5 +36,18 @@ public class AdvertiseConfig extends BaseEntity {
   @TableField("advertise_link")
   private String advertiseLink;
 
+  /**
+   * 图片链接
+   */
+  @Schema(description = "图片链接")
+  @TableField("img_link")
+  private String imgLink;
+
+  /**
+   * 广告类型
+   */
+  @Schema(description = "广告类型 10: 加入我们(第一位) 11:加入我们(第二位) 20:右侧广告位列表")
+  @TableField("advertise_type")
+  private String advertiseType;
 
 }

@@ -1,17 +1,18 @@
 package com.warape.aimechanician.domain.dto;
 
-import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.Data;
-
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.Data;
+
 /**
- * @author wanmingyu
- * @create 2023/4/11 21:25
+ * @author apeto
+ * @create 2023/4/12 12:30
  */
+@Schema(description = "修改密码实体")
 @Data
-public class LoginDto {
+public class UpdatePasswordDTO {
 
   @Schema(description = "账号")
   @NotBlank
@@ -25,5 +26,8 @@ public class LoginDto {
   @NotBlank
   private String password;
 
+  @Schema(description = "短信验证码")
+  @NotBlank
+  private String code;
 
 }

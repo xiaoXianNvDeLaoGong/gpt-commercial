@@ -2,6 +2,8 @@ package com.warape.aimechanician.controller;
 
 import java.util.List;
 
+import cn.hutool.core.collection.CollUtil;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.warape.aimechanician.domain.ResponseResult;
 import com.warape.aimechanician.domain.ResponseResultGenerator;
 import com.warape.aimechanician.entity.AdvertiseConfig;
@@ -29,10 +31,23 @@ public class AdvertiseConfigController {
   @Autowired
   private AdvertiseConfigService advertiseConfigService;
 
-  @Operation(description = "广告列表")
+  @Operation(summary = "广告列表")
   @GetMapping("/list")
   public ResponseResult<List<AdvertiseConfig>> list () {
     List<AdvertiseConfig> list = advertiseConfigService.list();
     return ResponseResultGenerator.success(list);
+  }
+
+  @Operation(summary = "根据type获取广告信息")
+  @GetMapping("/getByType")
+  public ResponseResult<AdvertiseConfig> getByType (String type) {
+    LambdaQueryWrapper<AdvertiseConfig> queryWrapper = new LambdaQueryWrapper<>();
+    queryWrapper.eq(AdvertiseConfig::getAdvertiseType, type);
+    List<AdvertiseConfig> list = advertiseConfigService.list(queryWrapper);
+    if (CollUtil.size(list) > 1) {
+      return ResponseResultGenerator.success(list.get(0));
+    } else {
+      return ResponseResultGenerator.success();
+    }
   }
 }

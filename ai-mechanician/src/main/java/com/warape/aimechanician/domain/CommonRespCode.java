@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 /**
- * @author wanmingyu
+ * @author apeto
  * @create 2023/4/3 11:31
  */
 @Getter
@@ -26,6 +26,7 @@ public enum CommonRespCode implements StatusEnumSupport {
   SMS_CODE_ERROR(1011, "短信验证码错误"),
   PASSWORD_ERROR(1012, "密码错误"),
   SMS_CODE_EXPIRE(1012, "短信验证码失效"),
+  IMAGE_CODE_EXPIRE(1013, "图形验证码失效"),
   REQUEST_FREQUENTLY(2001, "亲，手速太快了！"),
   ;
 

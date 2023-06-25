@@ -7,12 +7,12 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
 /**
- * @author wanmingyu
- * @create 2023/4/12 12:30
+ * @author apeto
+ * @create 2023/4/11 21:05
  */
-@Schema(description = "修改密码实体")
 @Data
-public class UpdatePasswordDto {
+@Schema(description = "注册")
+public class SmsSignUpDTO {
 
   @Schema(description = "账号")
   @NotBlank
@@ -22,12 +22,11 @@ public class UpdatePasswordDto {
   @NotNull
   private Integer type = 1;
 
-  @Schema(description = "密码")
+  @NotBlank
+  private String imageVerificationCode;
+  @NotBlank
+  private String smsCode;
   @NotBlank
   private String password;
-
-  @Schema(description = "短信验证码")
-  @NotBlank
-  private String code;
 
 }

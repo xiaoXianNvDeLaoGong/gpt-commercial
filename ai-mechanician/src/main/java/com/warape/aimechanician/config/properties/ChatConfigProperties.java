@@ -7,7 +7,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
 /**
- * @author wanmingyu
+ * @author apeto
  * @create 2023/4/19 10:38
  */
 @Data

@@ -6,12 +6,12 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
 /**
- * @author wanmingyu
+ * @author apeto
  * @create 2023/4/11 20:29
  */
 @Schema(description = "短信")
 @Data
-public class SendSmsDto {
+public class SendSmsDTO {
 
   @NotBlank
   @Schema(description = "发送账号")

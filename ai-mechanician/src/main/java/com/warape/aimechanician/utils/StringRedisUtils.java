@@ -11,7 +11,7 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.ZSetOperations.TypedTuple;
 
 /**
- * @author wanmingyu
+ * @author apeto
  * @create 2020/7/3 3:11 下午
  */
 public class StringRedisUtils {

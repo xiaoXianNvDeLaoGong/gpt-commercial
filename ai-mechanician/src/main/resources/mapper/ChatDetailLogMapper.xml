@@ -16,4 +16,12 @@
       and a.yn = 1;
 
   </select>
+
+  <select id="trend" resultType="com.warape.aimechanician.domain.vo.TrendVO">
+    select DATE_FORMAT(create_time, '%Y-%m-%d') date, count(1) count
+    from chat_detail_log
+    where create_time <![CDATA[>=]]> #{start}
+    and create_time <![CDATA[<=]]> #{end}
+    group by date
+  </select>
 </mapper>

@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
- * @author wanmingyu
+ * @author apeto
  * @create 2023/4/13 19:17
  */
 @Tag(name = "支付宝网关")
@@ -65,7 +65,7 @@ public class AliGatewayController {
       return "failure";
     }
     try {
-      paymentInfoService.callbackHandler(payAmount, tradeNo, outTradeNo, aliPayStateEnum.getSysPayStateEnum(), payTime);
+      paymentInfoService.callbackHandler(tradeNo, outTradeNo, aliPayStateEnum.getSysPayStateEnum(), payTime);
       return "success";
     } catch (Exception e) {
       return "failure";
