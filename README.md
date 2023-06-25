@@ -20,6 +20,7 @@
 
 
 
+
 ##C端 前端示例
 
 > 公众号交互
@@ -138,7 +139,7 @@ docker-compose -f docker-compose.yaml logs
 
 |  GPT商业版开源讨论群    | 作者微信 如果二维码过期请加我好友 |
 | :---        |    :----:  |
-|  <img src="https://github.com/apeto2/gpt-commercial/assets/131843341/91e1ddad-20ff-46c1-be4b-fe81436bf38d?raw=true" alt="图片替换文本" width="200" height="250" align="bottom" />     |  <img src="https://github.com/apeto2/gpt-commercial/assets/131843341/b6a8b5e2-4448-4e03-9335-9252eb55467b" alt="图片替换文本" width="210" height="250" align="bottom" />     | 
+|  <img src="https://github.com/apeto2/gpt-commercial/assets/131843341/1845add6-7464-4f75-8b4d-cb258f7de26c?raw=true" alt="图片替换文本" width="200" height="250" align="bottom" />     |  <img src="https://github.com/apeto2/gpt-commercial/assets/131843341/b6a8b5e2-4448-4e03-9335-9252eb55467b" alt="图片替换文本" width="210" height="250" align="bottom" />     | 
 
 
 
