@@ -4,7 +4,7 @@
  * @Autor: jinglin.gao
  * @Date: 2023-04-08 10:06:25
  * @LastEditors: jinglin.gao
- * @LastEditTime: 2023-04-23 21:38:08
+ * @LastEditTime: 2023-05-24 16:51:03
  */
 import React, {
   useState,
@@ -19,10 +19,9 @@ import _ from "lodash";
 import styles from "./index.module.less";
 import { CloseOutlined } from "@ant-design/icons";
 import UserAttestation from "@/pages/login/components/UserAttestation";
-import { messageFn, removeCookie } from "@/utils";
+import { messageFn, removeCookie, getSessionStorage } from "@/utils";
 import { sendSms } from "@/api/login";
 import { updatePassword } from "@/api/user";
-// import { getSessionStorage } from "@/utils";
 const ChangePwd = forwardRef((props, ref) => {
   const history = useHistory();
   const [pageState, setPageState] = useState(false);
@@ -45,6 +44,13 @@ const ChangePwd = forwardRef((props, ref) => {
 
   const userAttestationRef = useRef(null);
 
+  // 标题类型0 忘记密码  1 修改密码
+  const [titleType, setTitleType] = useState(1);
+
+  // 获取系统配置
+  let sysConfig = getSessionStorage("sysConfig");
+  let sysConfigRef = JSON.parse(sysConfig);
+
   // 监听图片验证码变化后 调用短信发送
   useEffect(() => {
     if (imgVerificationCode) {
@@ -52,6 +58,13 @@ const ChangePwd = forwardRef((props, ref) => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [imgVerificationCode]);
+
+  useEffect(() => {
+    if (countdownSmsTimerRef.current) {
+      clearInterval(countdownSmsTimerRef.current);
+    }
+  }, []);
+
   useImperativeHandle(ref, () => {
     return {
       getPage,
@@ -60,10 +73,11 @@ const ChangePwd = forwardRef((props, ref) => {
 
   /**
    * @description: 弹框展示
-   * @return {*}
+   * @return {*}sendType 1 邮箱 2手机号
    * @author: jinglin.gao
    */
-  const getPage = () => {
+  const getPage = (type, sendType) => {
+    setTitleType(type);
     setPageState(true);
   };
 
@@ -86,7 +100,7 @@ const ChangePwd = forwardRef((props, ref) => {
     if (!phoneNumber) {
       messageFn({
         type: "error",
-        content: "请输入手机号",
+        content: "请输入账号",
       });
 
       return;
@@ -103,14 +117,14 @@ const ChangePwd = forwardRef((props, ref) => {
     try {
       let data = {
         sendAccount: phoneNumber,
-        type: "1",
-        sendType: 1,
+        type: 2,
+        sendType: sysConfigRef.loginType,
       };
       let res = await sendSms(data);
       if (res.code === 200) {
         messageFn({
           type: "success",
-          content: "验证码发送成功,请查收",
+          content: "验证码发送成功",
         });
         setSmsState(true);
         // 60S打倒计时
@@ -134,11 +148,15 @@ const ChangePwd = forwardRef((props, ref) => {
       clearInterval(countdownSmsTimerRef.current);
     }
     let count = 60;
+    setCountdownSmsTimer(60);
     countdownSmsTimerRef.current = setInterval(() => {
       count--;
 
       if (count <= 0) {
         setSmsState(false);
+        if (countdownSmsTimerRef.current) {
+          clearInterval(countdownSmsTimerRef.current);
+        }
       }
       setCountdownSmsTimer(count);
     }, 1000);
@@ -148,7 +166,7 @@ const ChangePwd = forwardRef((props, ref) => {
     if (!phoneNumber) {
       messageFn({
         type: "error",
-        content: "请输入邮箱账号",
+        content: "请输入账号",
       });
       return;
     } else if (!imgVerificationCode) {
@@ -169,22 +187,32 @@ const ChangePwd = forwardRef((props, ref) => {
         content: "请输入密码",
       });
       return;
+    } else if (password.length < 6) {
+      messageFn({
+        type: "error",
+        content: "密码长度需大于6位",
+      });
+      return;
     }
 
     try {
       let data = {
         accountNum: phoneNumber,
-        type: 1,
+        type: sysConfigRef.loginType,
         password: password,
         code: smsVerificationCode,
       };
       let res = await updatePassword(data);
       if (res.code === 200) {
         hidePage();
-        history.replace("/");
+        history.replace("/login");
         removeCookie("satoken");
         removeCookie("tokenName");
         removeCookie("tokenValue");
+        messageFn({
+          type: "success",
+          content: "操作成功",
+        });
       } else {
         messageFn({
           type: "error",
@@ -200,9 +228,11 @@ const ChangePwd = forwardRef((props, ref) => {
     <>
       {pageState ? (
         <div className={styles.custom_dialog}>
-          <div className="custom_dialog-warp">
+          <div className="custom_dialog-warp animate__animated animate__flipInX">
             <div className="custom_dialog-head">
-              <span className="title">修改密码</span>
+              <span className="title">
+                {titleType === 0 ? "忘记密码" : "修改密码"}
+              </span>
               <CloseOutlined
                 onClick={hidePage}
                 className="closeBtn"
@@ -216,7 +246,7 @@ const ChangePwd = forwardRef((props, ref) => {
                   maxLength={30}
                   value={phoneNumber}
                   onChange={(e) => setPhoneNumber(e.target.value)}
-                  placeholder="请输入邮箱账号"
+                  placeholder="请输入账号"
                 />
               </div>
 

@@ -4,7 +4,7 @@
  * @Autor: jinglin.gao
  * @Date: 2022-08-17 09:37:55
  * @LastEditors: jinglin.gao
- * @LastEditTime: 2023-04-09 16:06:53
+ * @LastEditTime: 2023-05-04 09:26:34
  */
 
 import React, { lazy } from "react";
@@ -20,7 +20,7 @@ const CustomRoute = () => {
         <Route
           exact={true}
           path="/"
-          render={() => <Redirect to="/login" />}
+          render={() => <Redirect to="/ai/home" />}
           key="default"
         ></Route>
         <Route path="/login" component={Login} key="login"></Route>

@@ -16,6 +16,7 @@ import { logout } from "@/api/login";
 import { removeCookie, messageFn } from "@/utils";
 import ChangePwd from "../ChangePwd/index";
 import userDeafultImg from "../../../../../public/assets/imgs/userDeafultImg.svg";
+import Propose from "../Propose";
 const UserDetail = forwardRef((props, ref) => {
   const [pageState, setPageState] = useState(false);
   const inviteGiftUrlInfoRef = useRef(null);
@@ -23,6 +24,7 @@ const UserDetail = forwardRef((props, ref) => {
   const history = useHistory();
   const userInfo = useSelector((state) => state.userInfo);
   const [memberUserInfo, setMemberUserInfo] = useState({});
+  const proposeRef = useRef(null);
   useImperativeHandle(ref, () => {
     return {
       getPage,
@@ -66,6 +68,8 @@ const UserDetail = forwardRef((props, ref) => {
     setPageState(true);
     // getUserInfoFn();
     getMemberUserInfoFn();
+
+    console.log(userInfo, "userInfouserInfo");
   };
 
   /**
@@ -114,13 +118,23 @@ const UserDetail = forwardRef((props, ref) => {
 
   const changePassword = () => {
     hidePage();
-    changePwdRef.current.getPage();
+    changePwdRef.current.getPage(1);
   };
+
+  /**
+   * @description: 反馈与建议
+   * @return {*}
+   * @author: jinglin.gao
+   */
+  const proposeFn = () => {
+    proposeRef.current.getPage();
+  };
+
   return (
     <>
       {pageState ? (
         <div className={styles.user_detail_mask}>
-          <div className="user_detail-warp">
+          <div className="user_detail-warp animate__animated animate__fadeInDown">
             <div className="user_detail-head">
               <span className="title">个人信息</span>
               <CloseOutlined
@@ -135,11 +149,19 @@ const UserDetail = forwardRef((props, ref) => {
                 src={userInfo?.headImgUrl || userDeafultImg}
                 alt=""
               />
-              <p className="detail_info">{userInfo.nikeName}</p>
+              <p className="detail_info">{userInfo?.nikeName}</p>
 
               <div className="invite_btn">
                 <Button onClick={inviteUser} type="primary">
                   邀请有礼
+                </Button>
+
+                <Button
+                  style={{ marginLeft: 10 }}
+                  onClick={proposeFn}
+                  type="primary"
+                >
+                  反馈与建议
                 </Button>
               </div>
 
@@ -151,10 +173,10 @@ const UserDetail = forwardRef((props, ref) => {
                   <li style={{ width: "55%" }}>注册时间</li>
                 </ul>
                 <ul className="accent_info_content">
-                  <li>{memberUserInfo.deadline}天</li>
-                  <li>{memberUserInfo.totalCount}次</li>
-                  <li>{memberUserInfo.surplusCount}次</li>
-                  <li style={{ width: "55%" }}>{userInfo.createTime}</li>
+                  <li>{memberUserInfo?.deadline}天</li>
+                  <li>{memberUserInfo?.totalCount}次</li>
+                  <li>{memberUserInfo?.surplusCount}次</li>
+                  <li style={{ width: "55%" }}>{userInfo?.createTime}</li>
                 </ul>
               </div>
 
@@ -163,9 +185,9 @@ const UserDetail = forwardRef((props, ref) => {
                   退出登录
                 </span>
 
-                {/* <span onClick={changePassword} className="tolls_btn">
+                <span onClick={changePassword} className="tolls_btn">
                   修改密码
-                </span> */}
+                </span>
               </div>
             </div>
           </div>
@@ -179,6 +201,9 @@ const UserDetail = forwardRef((props, ref) => {
 
       {/* 修改密码 */}
       <ChangePwd ref={changePwdRef}></ChangePwd>
+
+      {/* 反馈与建议 */}
+      <Propose ref={proposeRef}></Propose>
     </>
   );
 });

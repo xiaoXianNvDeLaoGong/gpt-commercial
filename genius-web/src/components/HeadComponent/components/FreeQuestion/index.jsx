@@ -4,7 +4,7 @@
  * @Autor: jinglin.gao
  * @Date: 2023-04-08 10:06:25
  * @LastEditors: jinglin.gao
- * @LastEditTime: 2023-04-27 09:45:38
+ * @LastEditTime: 2023-04-27 10:39:45
  */
 import React, { useState, forwardRef, useImperativeHandle } from "react";
 
@@ -14,8 +14,10 @@ import officialAccountImg from "../../../../../public/assets/imgs/officialAccoun
 import copy from "../../../../../public/assets/imgs/copy.png";
 import SharkBtn from "@/components/SharkBtn";
 import { copyToClipboardFn } from "@/utils";
+import { useSelector } from "react-redux";
 const FreeQuestion = forwardRef((props, ref) => {
   const [pageState, setPageState] = useState(false);
+  const userInfo = useSelector((state) => state.userInfo);
 
   useImperativeHandle(ref, () => {
     return {
@@ -54,7 +56,7 @@ const FreeQuestion = forwardRef((props, ref) => {
    */
   const copyToClipboard = (e, data) => {
     e.stopPropagation();
-    let copyData = "领取ChatGPT次数:";
+    let copyData = "领取ChatGPT次数:" + userInfo.nikeName;
     copyToClipboardFn(copyData, "复制内容成功");
   };
 

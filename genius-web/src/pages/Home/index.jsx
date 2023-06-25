@@ -4,7 +4,7 @@
  * @Autor: jinglin.gao
  * @Date: 2022-10-12 13:45:29
  * @LastEditors: jinglin.gao
- * @LastEditTime: 2023-05-28 08:52:06
+ * @LastEditTime: 2023-05-19 08:56:25
  */
 import React, { useState, useRef, useEffect } from "react";
 import moment from "moment";
@@ -12,14 +12,20 @@ import styles from "./index.module.less";
 import BotIcon from "@/assets/imgs/icons/bot.svg";
 import Send from "@/assets/imgs/icons/send.svg";
 import { Markdown } from "@/components/Markdown";
+import advbg from "../../../public/assets/imgs/adv-bg.png";
 import {
   sessionRecordSidebar,
   createSession,
   getSessionDetail,
   removeSession,
+  getAdvertiseList,
 } from "@/api/gpt";
-import { Button, Tabs } from "antd";
-import { PlusCircleOutlined, CloseOutlined } from "@ant-design/icons";
+import { Button, Tabs, Modal, Carousel } from "antd";
+import {
+  PlusCircleOutlined,
+  CloseOutlined,
+  ExclamationCircleOutlined,
+} from "@ant-design/icons";
 import { getCookie, copyToClipboardFn, messageFn } from "@/utils";
 import _ from "lodash";
 import Loading from "@/components/Loading";
@@ -27,6 +33,7 @@ import { useSelector } from "react-redux";
 import PromptsTemplate from "./components/PromptsTemplate";
 import userDeafultImg from "../../../public/assets/imgs/userDeafultImg.svg";
 import { useHistory } from "react-router-dom";
+const { confirm } = Modal;
 const Home = () => {
   const history = useHistory();
   // 消息模板
@@ -39,9 +46,9 @@ const Home = () => {
   const userInfo = useSelector((state) => state.userInfo);
   // 会话列表
   const [sessionList, setSessionList] = useState([]);
-
+  const sessionListRef = useRef(null);
   // 当前会话
-  const [activeSession, setActiveSessions] = useState({});
+  const [activeSession, setActiveSessions] = useState(null);
 
   // 消息列表
   const [messageList, setMessageList] = useState([]);
@@ -69,6 +76,9 @@ const Home = () => {
   // 回答选择和会话详情显示
   // 0代表选择会话 1代表查看详情
   const [sessionType, setSessionType] = useState("0");
+
+  // 广告列表
+  const [advList, setAdvList] = useState([]);
   /**
    * @description: 回车提问
    * @param {*} e
@@ -92,8 +102,26 @@ const Home = () => {
 
   useEffect(() => {
     getSessionRecordSidebar();
+    getAdvList();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  /**
+   * @description:
+   * @return {*}
+   * @author: jinglin.gao
+   */
+  // getAdvertiseList
+  const getAdvList = async () => {
+    try {
+      let res = await getAdvertiseList();
+      if (res.code === 200) {
+        setAdvList(res.result || []);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   /**
    * @description: 设置会话滚动条处于页面底部
@@ -118,37 +146,70 @@ const Home = () => {
    * @author: jinglin.gao
    */
   const rganizeResultsByCode = ({ code, message }) => {
-    if (!code) return;
+    if (!code) return true;
+
     switch (code) {
       // 登录失败~
       case 4001:
-        history.replace("/");
+        confirm({
+          title: "尊敬的用户您好!",
+          icon: <ExclamationCircleOutlined />,
+          content: "当前您暂未登录,或登录状态已经失效,点击按钮,跳转登录页",
+          onOk() {
+            history.replace("/login");
+          },
+        });
         break;
       // 请登录后再进行使用
       case 4002:
-        history.replace("/");
+        confirm({
+          title: "尊敬的用户您好!",
+          icon: <ExclamationCircleOutlined />,
+          content: "当前您暂未登录,或登录状态已经失效,点击按钮,跳转登录页",
+          onOk() {
+            history.replace("/login");
+          },
+        });
         break;
-      // 您的余额不足请充值后再使用
+      //
       case 4003:
-        history.replace("/ai/commodity");
+        confirm({
+          title: "尊敬的用户您好!",
+          icon: <ExclamationCircleOutlined />,
+          content: "您的余额不足请充值后再使用,点击按钮,前往充值",
+          onOk() {
+            history.replace("/ai/commodity");
+          },
+        });
         break;
       // 您的会员已过期，请充值
       case 4004:
-        history.replace("/ai/commodity");
+        confirm({
+          title: "尊敬的用户您好!",
+          icon: <ExclamationCircleOutlined />,
+          content: "您的会员已过期,请充值,点击按钮,前往充值",
+          onOk() {
+            history.replace("/ai/commodity");
+          },
+        });
+
         break;
       // 您的提问次数不足，请充值
       case 4005:
-        history.replace("/ai/commodity");
+        confirm({
+          title: "尊敬的用户您好!",
+          icon: <ExclamationCircleOutlined />,
+          content: "您的提问次数不足，请充值,点击按钮,前往充值",
+          onOk() {
+            history.replace("/ai/commodity");
+          },
+        });
         break;
       default:
         break;
     }
 
-    messageFn({
-      type: "error",
-      content: message,
-    });
-
+    setMessageState(false);
     return false;
   };
 
@@ -170,7 +231,6 @@ const Home = () => {
     if (!userQuestion) return;
     // 设置滚动条在页面最底部
     mackSessionScrollToBottom();
-
     console.log("执行几次");
     // 用户提问
     let userQuestionData = _.cloneDeep(messageObj);
@@ -200,24 +260,26 @@ const Home = () => {
 
     // 清空提问框
     setUserQuestion("");
+    let questionUrl = window.location.origin;
     eventSourceRef.current = new EventSource(
-      `/api/chat/questions?prompt=${userQuestion}&reqId=${activeSession.reqId}&${tokenName}=Bearer ${tokenValue}`
+      `${questionUrl}/api/chat/questions?prompt=${encodeURIComponent(
+        userQuestion
+      )}&reqId=${activeSession.reqId}&${tokenName}=Bearer ${tokenValue}`
     );
 
     eventSourceRef.current.onmessage = function (event) {
-      console.log(event, "eventeventeventevent");
-
       // 设置滚动条在页面最底部
       mackSessionScrollToBottom();
       setMessageState(true);
       if (event.data === "DONE") {
         setMessageState(false);
         closeAnswer();
+        getSessionRecordSidebar();
       } else {
         let resData = JSON.parse(event.data);
 
         // 提问异常处理
-        rganizeResultsByCode(resData);
+        if (!rganizeResultsByCode(resData)) return;
 
         str = str + resData?.content || "";
         let activeChat = messageRefList.current[activeChatIndex.current];
@@ -225,8 +287,10 @@ const Home = () => {
         console.log(activeChat, "activeChatactiveChat");
 
         if (activeChat) {
-          activeChat.content = str;
+          activeChat.content = str ? str : "";
           messageRefList.current.splice(activeChatIndex.current, 1, activeChat);
+
+          console.log(messageRefList.current, "messageRefList.current");
 
           setMessageList([...messageRefList.current]);
         }
@@ -235,7 +299,7 @@ const Home = () => {
 
     eventSourceRef.current.onerror = function (event) {
       // 处理错误
-      console.log(event, "error");
+      closeAnswer();
     };
   };
 
@@ -279,25 +343,34 @@ const Home = () => {
       let res = await sessionRecordSidebar();
       console.log(res, "2222");
       if (res.code === 200) {
-        setSessionList(res.result || []);
-
         // 第一次刷新左侧列表要默认展示一条会话详细内容
         if (res.result.length) {
-          setActiveSessions(res.result[0]);
-          getSessionDetailFn(res.result[0]);
+          setSessionList(res.result || []);
+          sessionListRef.current = res.result || [];
+          if (!activeSession) {
+            setActiveSessions(res.result[0]);
+            getSessionDetailFn(res.result[0]);
+          }
         } else {
+          console.log(sessionList, "sessionListsessionList");
+          setSessionList([]);
+          sessionListRef.current = []; // 清空列表展示选择展示选项选择的选项卡选项卡选择选项卡
           // 如果查询会话列表为空则需要清除右侧对话
           setMessageList([]);
-          messageRefList.current = [];
 
-          // 此时需要创建一个新的会话
-          createSessionFn();
+          messageRefList.current = [];
         }
       }
     } catch (error) {
       console.log(error);
     }
   };
+  useEffect(() => {
+    if (sessionList.length === 0 && sessionListRef.current) {
+      createSessionFn();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [sessionList]);
 
   /**
    * @description: 新建会话
@@ -317,6 +390,7 @@ const Home = () => {
         messageRefList.current = [];
         setMessageList([]);
         setActiveSessions(sessionItem);
+        console.log(sessionList, "sessionListsessionList222222");
         let sessionListCopyData = _.cloneDeep(sessionList);
         setSessionList([sessionItem, ...sessionListCopyData]);
       }
@@ -375,6 +449,19 @@ const Home = () => {
           type: "success",
           content: "会话删除成功",
         });
+
+        let deletedSessionList = sessionList.filter(
+          (v) => v.reqId !== reqId && v.chatRole
+        );
+
+        console.log(deletedSessionList, "deletedSessionList");
+        if (deletedSessionList.length) {
+          setActiveSessions(deletedSessionList[0]);
+          getSessionDetailFn(deletedSessionList[0]);
+        } else {
+          setActiveSessions(null);
+          setSessionList([]);
+        }
         getSessionRecordSidebar();
       } else {
         messageFn({
@@ -397,6 +484,11 @@ const Home = () => {
     copyToClipboardFn(data, "复制内容成功");
   };
 
+  // 打开广告
+  const openAdv = (data) => {
+    window.open(data.advertiseLink);
+  };
+
   return (
     <div className={styles.home_container_warp}>
       <div className="mobile_tools-bar">
@@ -414,6 +506,7 @@ const Home = () => {
       </div>
 
       <div className="home_container_pc">
+        {/* 赋能列表 */}
         <div
           className={`home_container-menu ${
             tabBarType === "0" ? "menuShow" : ""
@@ -422,7 +515,12 @@ const Home = () => {
           <PromptsTemplate />
         </div>
 
-        <div className="home_container-warp">
+        {/* 对话区域 */}
+
+        <div
+          className="home_container-warp"
+          style={{ width: advList.length ? "calc(80% - 180px)" : "80%" }}
+        >
           <div className="home_container">
             <div
               className={`home_sidebar ${
@@ -438,7 +536,7 @@ const Home = () => {
                     onClick={() => chooseSession(v)}
                     key={v.reqId}
                     className={`home_chat-item ${
-                      activeSession.reqId === v.reqId
+                      activeSession?.reqId === v.reqId
                         ? "home_chat-item-selected"
                         : ""
                     }`}
@@ -487,7 +585,7 @@ const Home = () => {
                 <div className="home_window-header">
                   <div className="home_window-header-title">
                     <div className="home_window-header-main-title">
-                      {activeSession.content}
+                      {activeSession?.content}
                     </div>
 
                     <Button
@@ -531,7 +629,9 @@ const Home = () => {
                               <div className="markdown-body">
                                 {chatItem.content ? (
                                   <Markdown
-                                    content={chatItem.content}
+                                    content={
+                                      chatItem.content ? chatItem.content : ""
+                                    }
                                   ></Markdown>
                                 ) : (
                                   <Loading></Loading>
@@ -561,6 +661,17 @@ const Home = () => {
                               <div className="home_chat-user-message">
                                 {chatItem.content}
                               </div>
+
+                              <div className="home_chat-message-top-actions">
+                                <div
+                                  onClick={(e) =>
+                                    copyToClipboard(e, chatItem.content)
+                                  }
+                                  className="home_chat-message-top-action"
+                                >
+                                  复制
+                                </div>
+                              </div>
                             </div>
                           </div>
                         </div>
@@ -587,16 +698,14 @@ const Home = () => {
                       rows="4"
                     ></textarea>
 
-                    <div className="button_icon-button home_chat-input-send no-dark">
+                    <div
+                      className="button_icon-button home_chat-input-send no-dark"
+                      onClick={userAnswer}
+                    >
                       <div className="button_icon-button-icon">
                         <img src={Send} alt="" />
                       </div>
-                      <div
-                        className="button_icon-button-text"
-                        onClick={userAnswer}
-                      >
-                        发送
-                      </div>
+                      <div className="button_icon-button-text">发送</div>
                     </div>
                   </div>
                 </div>
@@ -604,6 +713,31 @@ const Home = () => {
             </div>
           </div>
         </div>
+
+        {/* 广告位 */}
+        {advList.length ? (
+          <div className="home_container-adv">
+            <Carousel className="" autoplay dotPosition="top">
+              {advList.map((v) => {
+                return (
+                  <div key={v.id} className="adv-item">
+                    <div className="adv-info">
+                      <p className="adv-info-title">{v.advertiseName}</p>
+                      <img
+                        onClick={() => openAdv(v)}
+                        className="advImg"
+                        src={v.imgLink}
+                        alt=""
+                      />
+                    </div>
+                  </div>
+                );
+              })}
+            </Carousel>
+          </div>
+        ) : (
+          ""
+        )}
       </div>
     </div>
   );
