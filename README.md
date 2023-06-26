@@ -17,6 +17,7 @@
 6. AI角色赋能
 7. 会员卡功能
 8. 反馈与建议
+9. 后台管理仪表盘/用户信息/gpt配置/会员卡及权益配置/站点logo配置/网站名称配置....省略~
 
 
 
@@ -75,7 +76,7 @@
 
 ## 模块说明
 
-|   C 端源码    |  服务端     | 后台管理页面 |
+|   C 端页面源码    |  服务端     | B端后台管理页面源码 |
 | :---        |    :----:   |:------:| 
 |    [genius-web](genius-web)   |  [ai-mechanician](ai-mechanician)   |   [genius-admin](genius-admin)     |
 
@@ -83,9 +84,9 @@
 ## 部署教程
 
 ### 1.环境安装(新手建议宝塔安装)
-1. mysql
-2. redis
-3. Nginx
+1. mysql >=5.7
+2. redis >=6
+3. Nginx >=2.0
 
 ### 2.初始化SQL
 将ai-mechanician/sql/ai-mechanician.sql导入到mysql中
@@ -108,7 +109,7 @@ services:
   gpt-commercial:
     container_name: gpt-commercial
     network_mode: "host"
-    image: registry.cn-hangzhou.aliyuncs.com/warape/gpt-commercial:v1.0.2
+    image: registry.cn-hangzhou.aliyuncs.com/warape/gpt-commercial:vlatest
     volumes:
       - /www/wwwroot/docker/gpt-commercial/config:/home/spring/config  #config映射目录
       - /www/wwwroot/docker/gpt-commercial/logs:/home/spring/logs     #logs映射目录
