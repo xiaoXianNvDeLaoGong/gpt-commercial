@@ -4,7 +4,7 @@
  * @Autor: jinglin.gao
  * @Date: 2023-04-05 13:15:13
  * @LastEditors: jinglin.gao
- * @LastEditTime: 2023-05-29 09:16:11
+ * @LastEditTime: 2023-04-19 09:38:10
  */
 import React, { useState, useEffect, useRef } from "react";
 import { ArrowLeftOutlined } from "@ant-design/icons";
@@ -74,11 +74,7 @@ const Commodity = () => {
       <div className="commodity_content">
         <Row gutter={16}>
           {commodityList.map((v) => (
-            <Col
-              style={{ marginBottom: 15 }}
-              key={v.cardName + new Date().getTime()}
-              span={6}
-            >
+            <Col key={v.cardName + new Date().getTime()} span={6}>
               <div
                 onClick={() => chooseCard(v)}
                 className={`commodity_content_animate_card wallet ${

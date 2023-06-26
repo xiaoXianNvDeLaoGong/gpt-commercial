@@ -50,3 +50,11 @@ export function removeSession(params) {
         params
     });
 }
+
+// 获取广告列表
+export function getAdvertiseList() {
+    return request({
+        url: "/api/advertise/list",
+        method: "get",
+    });
+}

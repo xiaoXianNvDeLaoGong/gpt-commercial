@@ -1,11 +1,14 @@
 package com.warape.aimechanician.impl;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
 import cn.dev33.satoken.config.SaTokenConfig;
 import cn.hutool.core.collection.CollectionUtil;
+import cn.hutool.core.date.DateTime;
+import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
@@ -16,6 +19,7 @@ import com.warape.aimechanician.annotations.MethodInfo;
 import com.warape.aimechanician.domain.Constants;
 import com.warape.aimechanician.domain.SystemConstants.RedisKeyEnum;
 import com.warape.aimechanician.domain.vo.SessionRecordVo;
+import com.warape.aimechanician.domain.vo.TrendVO;
 import com.warape.aimechanician.entity.ChatDetailLog;
 import com.warape.aimechanician.mapper.ChatDetailLogMapper;
 import com.warape.aimechanician.service.ChatDetailLogService;
@@ -93,9 +97,7 @@ public class ChatDetailLogServiceImpl extends ServiceImpl<ChatDetailLogMapper, C
     LambdaQueryWrapper<ChatDetailLog> queryWrapper = new LambdaQueryWrapper<>();
     queryWrapper.eq(ChatDetailLog::getRequestId, reqId);
     queryWrapper.eq(ChatDetailLog::getUserId, userId);
-    if (!remove(queryWrapper)) {
-      throw new RuntimeException("删除回话失败");
-    }
+    remove(queryWrapper);
   }
 
   @Async("chat")
@@ -116,7 +118,7 @@ public class ChatDetailLogServiceImpl extends ServiceImpl<ChatDetailLogMapper, C
 
     // 提问放入缓存
     for (String splitStr : StrUtil.split(prompt, Constants.CONTEXT_SPLIT)) {
-      StringRedisUtils.add(redisKey, JSONUtil.toJsonStr(new Message(Role.USER.getName(), splitStr, userId.toString(),null)), askUserEntity.getId());
+      StringRedisUtils.add(redisKey, JSONUtil.toJsonStr(new Message(Role.USER.getName(), splitStr, userId.toString())), askUserEntity.getId());
     }
 
     ChatDetailLog answerEntity = new ChatDetailLog();
@@ -130,7 +132,7 @@ public class ChatDetailLogServiceImpl extends ServiceImpl<ChatDetailLogMapper, C
     // 回答放入缓存
     for (String splitStr : StrUtil.split(msg, Constants.CONTEXT_SPLIT)) {
 
-      StringRedisUtils.add(redisKey, JSONUtil.toJsonStr(new Message(Role.ASSISTANT.getName(), splitStr, userId.toString(),null)), answerEntity.getId());
+      StringRedisUtils.add(redisKey, JSONUtil.toJsonStr(new Message(Role.ASSISTANT.getName(), splitStr, userId.toString())), answerEntity.getId());
     }
 
     Integer consumeCount = 1;
@@ -161,7 +163,7 @@ public class ChatDetailLogServiceImpl extends ServiceImpl<ChatDetailLogMapper, C
         String content = chatDetailLog.getContent();
         String chatRole = chatDetailLog.getChatRole();
         for (String splitContent : StrUtil.split(content, CONTEXT_SPLIT)) {
-          Message message = new Message(chatRole, splitContent, userId.toString(),null);
+          Message message = new Message(chatRole, splitContent, userId.toString());
           if (messages.size() >= limit) {
             break;
           }
@@ -173,5 +175,16 @@ public class ChatDetailLogServiceImpl extends ServiceImpl<ChatDetailLogMapper, C
 
     messages.add(Message.builder().role(Role.USER).content(prompt).build());
     return messages;
+  }
+
+  @Override
+  public List<TrendVO> trend (Integer day) {
+    Date end = new Date();
+    DateTime start = DateUtil.offsetDay(end, -day);
+    if (day == 0) {
+      start = DateUtil.beginOfDay(end);
+      end = DateUtil.endOfDay(end);
+    }
+    return baseMapper.trend(start,end);
   }
 }

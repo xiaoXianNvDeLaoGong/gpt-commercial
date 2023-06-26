@@ -6,12 +6,16 @@ import com.ijpay.alipay.AliPayApiConfig;
 import com.warape.aimechanician.config.properties.AliPayProperties;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.autoconfigure.web.servlet.ConditionalOnMissingFilterBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 /**
- * @author wanmingyu
+ * @author apeto
  * @create 2023/4/13 16:48
  */
 @Slf4j
@@ -26,13 +30,13 @@ public class AliPayConfig {
   public AlipayClient aliPayApiConfig () {
     log.info("开始加载支付宝支付相关配置:{}", JSONUtil.toJsonStr(aliPayProperties));
     return AliPayApiConfig.builder()
-            .setAppId(aliPayProperties.getAppId())
-            .setAliPayPublicKey(aliPayProperties.getAliPublicKey())
-            .setCharset("UTF-8")
-            .setPrivateKey(aliPayProperties.getAppPrivateKey())
-            .setServiceUrl(aliPayProperties.getServerUrl())
-            .setSignType("RSA2")
-            .build().getAliPayClient();
+        .setAppId(aliPayProperties.getAppId())
+        .setAliPayPublicKey(aliPayProperties.getAliPublicKey())
+        .setCharset("UTF-8")
+        .setPrivateKey(aliPayProperties.getAppPrivateKey())
+        .setServiceUrl(aliPayProperties.getServerUrl())
+        .setSignType("RSA2")
+        .build().getAliPayClient();
   }
 
 }

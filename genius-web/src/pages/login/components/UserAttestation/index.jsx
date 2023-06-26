@@ -4,19 +4,26 @@
  * @Autor: jinglin.gao
  * @Date: 2023-04-08 10:06:25
  * @LastEditors: jinglin.gao
- * @LastEditTime: 2023-04-13 11:27:30
+ * @LastEditTime: 2023-05-21 16:23:01
  */
-import React, { useState, forwardRef, useImperativeHandle } from "react";
+import React, {
+  useState,
+  forwardRef,
+  useImperativeHandle,
+  useRef,
+} from "react";
 import { Input, Button } from "antd";
 import _ from "lodash";
 import styles from "./index.module.less";
 import { CloseOutlined } from "@ant-design/icons";
-import { imageVerificationCode } from "@/api/login";
+import { imageVerificationCode, checkImageCode } from "@/api/login";
+import { messageFn } from "@/utils";
 const UserAttestation = forwardRef(
   ({ phoneNumber, setImgVerificationCode }, ref) => {
     const [pageState, setPageState] = useState(false);
     const [verificationCode, setVerificationCode] = useState("");
-
+    // 注册类型
+    const rigistType = useRef("");
     const [vcerificationCodeImg, setVcerificationCodeImg] = useState("");
     useImperativeHandle(ref, () => {
       return {
@@ -29,7 +36,7 @@ const UserAttestation = forwardRef(
      * @return {*}
      * @author: jinglin.gao
      */
-    const getPage = () => {
+    const getPage = (type) => {
       setPageState(true);
       getImageVerificationCode();
     };
@@ -68,16 +75,41 @@ const UserAttestation = forwardRef(
       getImageVerificationCode();
     };
 
+    /**
+     * @description: 校验图片验证码
+     * @return {*}
+     * @author: jinglin.gao
+     */
+    const checkImgCodeFn = async () => {
+      try {
+        let data = {
+          accountNum: phoneNumber,
+          code: verificationCode,
+        };
+        let res = await checkImageCode(data);
+        if (res.code === 200) {
+          setImgVerificationCode(verificationCode);
+          hidePage();
+        } else {
+          messageFn({
+            type: "error",
+            content: res.message,
+          });
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
     const submit = () => {
-      setImgVerificationCode(verificationCode);
-      hidePage();
+      checkImgCodeFn();
     };
 
     return (
       <>
         {pageState ? (
-          <div className={styles.custom_dialog}>
-            <div className="custom_dialog-warp">
+          <div className={styles.custom_dialog_userAttestation}>
+            <div className="custom_dialog-warp animate__animated animate__pulse">
               <div className="custom_dialog-head">
                 <span className="title">访问验证</span>
                 <CloseOutlined
@@ -93,7 +125,7 @@ const UserAttestation = forwardRef(
                 </p>
 
                 <Input
-                  maxLength={11}
+                  maxLength={4}
                   value={verificationCode}
                   onChange={(e) => setVerificationCode(e.target.value)}
                   placeholder="请输入下图中的字符,不区分大小写"

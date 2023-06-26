@@ -9,7 +9,7 @@ import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
 
 /**
- * @author wanmingyu
+ * @author apeto
  * @create 2023/4/4 17:20
  */
 public class JackonBigDecimalSerializer extends JsonSerializer<BigDecimal> {

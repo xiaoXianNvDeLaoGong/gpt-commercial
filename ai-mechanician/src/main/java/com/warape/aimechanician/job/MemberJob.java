@@ -2,7 +2,6 @@ package com.warape.aimechanician.job;
 
 import java.util.List;
 
-import cn.hutool.core.collection.CollectionUtil;
 import com.warape.aimechanician.domain.Constants.ExchangeCardStateEnum;
 import com.warape.aimechanician.entity.ExchangeCardDetail;
 import com.warape.aimechanician.service.ExchangeCardDetailService;
@@ -12,7 +11,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 /**
- * @author wanmingyu
+ * @author apeto
  * @create 2023/4/9 5:41 下午
  */
 @Slf4j
@@ -24,14 +23,14 @@ public class MemberJob {
 
   @Scheduled(cron = "5 * * * * ? ")
   public void expireMember () {
-    log.info("[开始执行]会员过期扫描定时器");
+//    log.info("[开始执行]会员过期扫描定时器");
     List<ExchangeCardDetail> exchangeCardDetails = exchangeCardDetailService.selectExpire();
     for (ExchangeCardDetail exchangeCardDetail : exchangeCardDetails) {
       exchangeCardDetail.setExchangeState(ExchangeCardStateEnum.EXPIRES.getState());
     }
     exchangeCardDetailService.updateBatchById(exchangeCardDetails);
 
-    log.info("会员过期扫描定时器[执行完毕] 条数:{}", CollectionUtil.size(exchangeCardDetails));
+//    log.info("会员过期扫描定时器[执行完毕] 条数:{}", CollectionUtil.size(exchangeCardDetails));
   }
 
 }

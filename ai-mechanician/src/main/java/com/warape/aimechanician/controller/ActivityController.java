@@ -9,7 +9,9 @@ import com.warape.aimechanician.domain.ResponseResult;
 import com.warape.aimechanician.domain.ResponseResultGenerator;
 import com.warape.aimechanician.domain.vo.ActivityInfoVo;
 import com.warape.aimechanician.entity.MemberCard;
+import com.warape.aimechanician.entity.MemberRights;
 import com.warape.aimechanician.service.MemberCardService;
+import com.warape.aimechanician.service.MemberRightsService;
 import com.warape.aimechanician.utils.CommonUtils;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -20,7 +22,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
- * @author wanmingyu
+ * @author apeto
  * @create 2023/4/5 5:18 下午
  */
 @Tag(name = "活动相关")
@@ -30,10 +32,10 @@ public class ActivityController {
 
   @Value("${activity.invite-config.url}")
   private String url;
-  @Value("${member-config.rights.invite01}")
-  private Integer count;
   @Autowired
   private MemberCardService memberCardService;
+  @Autowired
+  private MemberRightsService memberRightsService;
 
   @Operation(summary = "获取邀请有礼链接信息")
   @GetMapping("/inviteGiftUrlInfo")
@@ -44,9 +46,10 @@ public class ActivityController {
     long userId = StpUtil.getLoginIdAsLong();
     MemberCard memberCard = memberCardService.getByCardCode("invite01");
     String encryptHex = CommonUtils.inviteSymmetricCrypto().encryptHex(userId + "");
+    MemberRights memberRights = memberRightsService.getByMemberCode(memberCard.getCardCode());
     map.put("url", url);
     map.put("code", encryptHex);
-    map.put("desc", StrUtil.format(str, count, memberCard.getCardDay()));
+    map.put("desc", StrUtil.format(str, memberRights.getCount(), memberCard.getCardDay()));
     return ResponseResultGenerator.success(map);
   }
 

@@ -2,7 +2,7 @@ package com.warape.aimechanician.domain;
 
 
 /**
- * @author wanmingyu
+ * @author apeto
  * @create 2023/4/1 11:36 上午
  */
 public class ResponseResultGenerator {

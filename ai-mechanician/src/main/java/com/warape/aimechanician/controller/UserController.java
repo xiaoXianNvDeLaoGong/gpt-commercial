@@ -1,5 +1,11 @@
 package com.warape.aimechanician.controller;
 
+import java.io.IOException;
+import java.util.Objects;
+
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletResponse;
+
 import cn.dev33.satoken.stp.StpUtil;
 import cn.hutool.captcha.CaptchaUtil;
 import cn.hutool.captcha.LineCaptcha;
@@ -10,14 +16,12 @@ import cn.hutool.core.util.PhoneUtil;
 import cn.hutool.core.util.StrUtil;
 import com.warape.aimechanician.annotations.DistributedLock;
 import com.warape.aimechanician.domain.CommonRespCode;
+import com.warape.aimechanician.domain.Constants.LoginTypeEnum;
 import com.warape.aimechanician.domain.Constants.ResponseEnum;
 import com.warape.aimechanician.domain.ResponseResult;
 import com.warape.aimechanician.domain.ResponseResultGenerator;
 import com.warape.aimechanician.domain.SystemConstants.RedisKeyEnum;
-import com.warape.aimechanician.domain.dto.LoginDto;
-import com.warape.aimechanician.domain.dto.SendSmsDto;
-import com.warape.aimechanician.domain.dto.SmsSignUpDto;
-import com.warape.aimechanician.domain.dto.UpdatePasswordDto;
+import com.warape.aimechanician.domain.dto.*;
 import com.warape.aimechanician.domain.vo.UserInfoVo;
 import com.warape.aimechanician.entity.UserInfo;
 import com.warape.aimechanician.entity.WechatUserInfo;
@@ -33,14 +37,16 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
-
-import javax.servlet.ServletOutputStream;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 /**
- * @author wanmingyu
+ * @author apeto
  * @create 2023/4/8 6:07 下午
  */
 @Slf4j
@@ -69,7 +75,7 @@ public class UserController {
   @Operation(summary = "发送验证码")
   @PutMapping("/sendSms")
   @DistributedLock(prefix = RedisKeyEnum.SMS_SIGN_UP_LOCK, key = "#sendSmsDto.getSendAccount()", waitFor = 0)
-  public ResponseResult<?> sendSms (@Validated @RequestBody SendSmsDto sendSmsDto) {
+  public ResponseResult<?> sendSms (@Validated @RequestBody SendSmsDTO sendSmsDto) {
 
     String sendAccount = sendSmsDto.getSendAccount();
     String type = sendSmsDto.getType();
@@ -80,7 +86,7 @@ public class UserController {
 
     if (sendType == null) {
       // 默认邮箱
-      sendType = 1;
+      sendType = LoginTypeEnum.EMAIL.getType();
     }
 
     String key = RedisKeyEnum.SMS_LOCK.getKey(sendAccount);
@@ -97,14 +103,15 @@ public class UserController {
       RandomGenerator randomGenerator = new RandomGenerator("0123456789", 4);
       String generate = randomGenerator.generate();
 
-      if (sendType.equals(2) && !PhoneUtil.isMobile(sendAccount)) {
+      if (sendType.equals(LoginTypeEnum.PHONE.getType()) && !PhoneUtil.isMobile(sendAccount)) {
         return ResponseResultGenerator.result(4001, "手机号格式错误");
       }
-      if (!Validator.isEmail(sendAccount)) {
+
+      if (sendType.equals(LoginTypeEnum.EMAIL.getType()) && !Validator.isEmail(sendAccount)) {
         return ResponseResultGenerator.result(4002, "邮箱格式错误");
       }
 
-      commonHandler.sendCode(generate, sendAccount, type, sendType);
+      commonHandler.sendCode(generate, sendAccount, type, LoginTypeEnum.getByEnum(sendType));
       return ResponseResultGenerator.success();
     } finally {
       RedissonUtils.unlock(key);
@@ -118,7 +125,6 @@ public class UserController {
   public ResponseResult<?> imageVerificationCode (HttpServletResponse response, @RequestParam("phone") String phone) throws IOException {
     // 自定义纯数字的验证码（随机4位数字，可重复）
     RandomGenerator randomGenerator = new RandomGenerator("0123456789", 4);
-    String generate = randomGenerator.generate();
     LineCaptcha lineCaptcha = CaptchaUtil.createLineCaptcha(200, 100);
     lineCaptcha.setGenerator(randomGenerator);
     // 重新生成code
@@ -127,25 +133,42 @@ public class UserController {
     lineCaptcha.write(outputStream);
     outputStream.flush();
     outputStream.close();
-    StringRedisUtils.setForTimeMIN(RedisKeyEnum.SMS_IMAGE_CODE.getKey(phone), generate, 5);
+    StringRedisUtils.setForTimeMIN(RedisKeyEnum.SMS_IMAGE_CODE.getKey(phone), lineCaptcha.getCode(), 5);
+    return ResponseResultGenerator.success();
+  }
+
+
+  @Operation(summary = "校验图片验证码")
+  @PostMapping("/checkImageCode")
+  public ResponseResult<?> checkImageCode(@RequestBody@Validated CheckImageCodeDTO checkImageCodeDTO){
+    String sysImageCode = StringRedisUtils.get(RedisKeyEnum.SMS_IMAGE_CODE.getKey(checkImageCodeDTO.getAccountNum()));
+    if(StrUtil.isBlank(sysImageCode)){
+      return ResponseResultGenerator.result(CommonRespCode.IMAGE_CODE_EXPIRE);
+    }
+    if (!StrUtil.equals(sysImageCode,checkImageCodeDTO.getCode())) {
+      return ResponseResultGenerator.result(CommonRespCode.VERIFICATION_CODE);
+    }
     return ResponseResultGenerator.success();
   }
 
   @Operation(summary = "注册")
   @PutMapping("/smsSignUp")
-  @DistributedLock(prefix = RedisKeyEnum.SMS_SIGN_UP_LOCK, key = "#smsSignUpDto.getPhone()", waitFor = 0)
-  public ResponseResult<?> smsSignUp (@Validated @RequestBody SmsSignUpDto smsSignUpDto) {
+  @DistributedLock(prefix = RedisKeyEnum.SMS_SIGN_UP_LOCK, key = "#smsSignUpDto.getAccountNum()", waitFor = 0)
+  public ResponseResult<?> smsSignUp (@Validated @RequestBody SmsSignUpDTO smsSignUpDto) {
 
     String accountNum = smsSignUpDto.getAccountNum();
     String password = smsSignUpDto.getPassword();
     Integer type = smsSignUpDto.getType();
     if (type == null) {
       // 邮箱
-      type = 1;
+      type = LoginTypeEnum.EMAIL.getType();
     }
     String sysImageCode = StringRedisUtils.get(RedisKeyEnum.SMS_IMAGE_CODE.getKey(accountNum));
+    if(StrUtil.isBlank(sysImageCode)){
+      return ResponseResultGenerator.result(CommonRespCode.IMAGE_CODE_EXPIRE);
+    }
     RandomGenerator randomGenerator = new RandomGenerator("0123456789", 4);
-    if (randomGenerator.verify(sysImageCode, smsSignUpDto.getImageVerificationCode())) {
+    if (!StrUtil.equals(smsSignUpDto.getImageVerificationCode(),sysImageCode)) {
       return ResponseResultGenerator.result(CommonRespCode.VERIFICATION_CODE);
     }
 
@@ -157,24 +180,22 @@ public class UserController {
     if (!smsCode.equals(smsSignUpDto.getSmsCode())) {
       return ResponseResultGenerator.result(CommonRespCode.SMS_CODE_ERROR);
     }
-    Long signUpUserId = userInfoService.doSmsSignUp(accountNum, password, type);
-    String token = StpUtil.createLoginSession(signUpUserId);
-    inviteLogService.inviteHandler(smsSignUpDto.getInviteCode(), signUpUserId);
+    userInfoService.doSmsSignUp(accountNum, password, type);
     StringRedisUtils.delete(key);
-    return ResponseResultGenerator.success(token);
+    return ResponseResultGenerator.success();
   }
 
   @Operation(summary = "登录")
   @PostMapping("/login")
-  @DistributedLock(prefix = RedisKeyEnum.SMS_SIGN_UP_LOCK, key = "#loginDto.getPhone()")
-  public ResponseResult<String> login (@Validated @RequestBody LoginDto loginDto) {
+  @DistributedLock(prefix = RedisKeyEnum.SMS_SIGN_UP_LOCK, key = "#loginDto.getAccountNum()")
+  public ResponseResult<String> login (@Validated @RequestBody LoginDTO loginDto) {
     Integer type = loginDto.getType();
     String accountNum = loginDto.getAccountNum();
     UserInfo userInfo;
-    if (type == 1) {
+    if (Objects.equals(type, LoginTypeEnum.EMAIL.getType())) {
       // 邮箱
       userInfo = userInfoService.getByEmail(accountNum);
-    } else if (type == 2) {
+    } else if (Objects.equals(type, LoginTypeEnum.PHONE.getType())) {
       userInfo = userInfoService.getByPhone(accountNum);
     } else {
       return ResponseResultGenerator.error();
@@ -188,14 +209,15 @@ public class UserController {
     }
     Long userId = userInfo.getId();
     String token = StpUtil.createLoginSession(userId);
+    inviteLogService.inviteHandler(loginDto.getInviteCode(), userId);
     return ResponseResultGenerator.success(token);
   }
 
 
   @Operation(summary = "修改密码")
   @PostMapping("/updatePassword")
-  @DistributedLock(prefix = RedisKeyEnum.UPDATE_PASSWORD_LOCK, key = "#updatePasswordDto.getPhone()", waitFor = 0)
-  public ResponseResult<?> updatePassword (@Validated @RequestBody UpdatePasswordDto updatePasswordDto) {
+  @DistributedLock(prefix = RedisKeyEnum.UPDATE_PASSWORD_LOCK, key = "#updatePasswordDto.getAccountNum()", waitFor = 0)
+  public ResponseResult<?> updatePassword (@Validated @RequestBody UpdatePasswordDTO updatePasswordDto) {
     String password = updatePasswordDto.getPassword();
     String code = updatePasswordDto.getCode();
     String accountNum = updatePasswordDto.getAccountNum();
@@ -207,14 +229,19 @@ public class UserController {
       return ResponseResultGenerator.result(CommonRespCode.SMS_CODE_ERROR);
     }
     UserInfo userInfo;
-    if (type == 1) {
+    if (LoginTypeEnum.EMAIL.getType().equals(type)) {
       // 邮箱
       userInfo = userInfoService.getByEmail(accountNum);
-    } else if (type == 2) {
+    } else if (LoginTypeEnum.PHONE.getType().equals(type)) {
+      // 手机号
       userInfo = userInfoService.getByPhone(accountNum);
     } else {
       return ResponseResultGenerator.error();
     }
+    if(userInfo == null){
+      return ResponseResultGenerator.result(ResponseEnum.USER_EXIST);
+    }
+
     userInfo.setUserPassword(CommonUtils.md5Salt(password));
     userInfoService.updateById(userInfo);
     StringRedisUtils.delete(key);

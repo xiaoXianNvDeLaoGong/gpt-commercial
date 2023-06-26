@@ -1,7 +1,8 @@
 .loginWarp {
   width: 100%;
   height: 100%;
-
+  overflow: hidden;
+  position: relative;
   background: radial-gradient(
       circle at 60% 90%,
       rgba(46, 103, 161, 1),
@@ -19,11 +20,18 @@
       width: 100%;
       height: 100%;
       transition: transform 0.8s;
-      transform-style: preserve-3d;
-      position: relative;
-      -webkit-transform-style: preserve-3d; /* Chrome 和 Safari */
-      -moz-transform-style: preserve-3d; /* Firefox */
-      -ms-transform-style: preserve-3d; /* Internet Explorer */
+      position: absolute;
+      top: 0;
+      z-index: 1;
+    }
+    .login_bottom-info {
+      position: absolute;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      a {
+        color: #fff;
+      }
     }
 
     .userAgreementInfoBox {
@@ -48,6 +56,7 @@
     .typeLoginBox {
       width: 300px;
       min-height: 338px;
+      border-radius: 20px;
       padding-bottom: 20px;
       position: absolute;
       top: 50%;
@@ -87,17 +96,14 @@
       box-shadow: 10px -10px 20px rgba(0, 0, 0, 0.2),
         -10px 10px 20px rgba(255, 255, 255, 0.1);
 
-      /*  元素后面区域添加模糊效果 */
-      // backdrop-filter: blur();
-      border-radius: 20px;
-      backface-visibility: hidden;
-      -webkit-backface-visibility: hidden; /* Chrome 和 Safari */
-      -moz-backface-visibility: hidden; /* Firefox */
-      -ms-backface-visibility: hidden; /* Internet Explorer */
+      transition: all 0.5s ease-in-out;
+
       .logo {
         display: block;
         margin: 0 auto;
         width: 60%;
+        height: 150px;
+        margin-top: 10px;
       }
       .title {
         width: 100%;
@@ -107,9 +113,16 @@
         margin-top: 20px;
         font-weight: bold;
       }
+
+      .backUp {
+        position: absolute;
+        top: 15px;
+        left: 15px;
+        cursor: pointer;
+      }
     }
+
     .loginBox {
-      transform: rotateY(0deg);
       .login_method-box {
         width: 100%;
         display: flex;
@@ -118,13 +131,6 @@
       }
     }
     .typeLoginBox {
-      -webkit-transform: rotateY(180deg); //谷歌
-      -moz-transform: rotateY(180deg); //火狐
-      -ms-transform: rotateY(180deg); //IE
-      -o-transform: rotateY(180deg); //opera
-      transform: rotateY(180deg);
-      z-index: 999;
-
       #qrCode {
         margin-top: 30px;
       }
@@ -146,7 +152,7 @@
         border-radius: 50px;
         position: relative;
         overflow: hidden;
-        transition: all 0.5s ease;
+
         margin: 0 auto;
         cursor: pointer;
         z-index: 99;
@@ -200,25 +206,25 @@
           }
         }
 
-        // .verification_code-box {
-        //   width: 100%;
-        //   display: flex;
-        //   justify-content: space-between;
-        //   margin-top: 20px;
-        //   .get_verification,
-        //   .verification_code {
-        //     flex: 1;
-        //     height: auto;
-        //     background: #fff;
-        //     display: flex;
-        //     align-items: center;
-        //     justify-content: center;
-        //     margin-left: 5px;
-        //     border-radius: 5px;
-        //     color: dimgray;
-        //     cursor: pointer;
-        //   }
-        // }
+        .verification_code-box {
+          width: 100%;
+          display: flex;
+          justify-content: space-between;
+          margin-top: 20px;
+          .get_verification,
+          .verification_code {
+            flex: 1;
+            height: auto;
+            background: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-left: 5px;
+            border-radius: 5px;
+            color: dimgray;
+            cursor: pointer;
+          }
+        }
       }
 
       .wxLoginBox {
@@ -228,15 +234,13 @@
           margin-bottom: 0px;
           color: hsl(49, 98%, 60%);
         }
-      }
-    }
 
-    .loginBoxRotaateY {
-      -webkit-transform: rotateY(180deg); //谷歌
-      -moz-transform: rotateY(180deg); //火狐
-      -ms-transform: rotateY(180deg); //IE
-      -o-transform: rotateY(180deg); //opera
-      transform: rotateY(180deg);
+        .refreshWxCode {
+          color: red;
+          font-weight: bold;
+          cursor: pointer;
+        }
+      }
     }
   }
 }

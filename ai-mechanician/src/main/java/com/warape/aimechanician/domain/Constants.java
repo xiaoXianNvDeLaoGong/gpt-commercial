@@ -4,13 +4,13 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 /**
- * @author wanmingyu
+ * @author apeto
  * @create 2023/3/27 11:31
  */
 public interface Constants {
 
-  Integer CONTEXT_LIMIT = 10;
-  Integer CONTEXT_SPLIT = 150;
+  Integer CONTEXT_LIMIT = 5;
+  Integer CONTEXT_SPLIT = 100;
 
   @Getter
   @AllArgsConstructor
@@ -23,7 +23,8 @@ public interface Constants {
     PHONE_EXIST(4006, "该手机号已存在"),
     USER_EXIST(4008, "用户不存在,请先注册~"),
     QR_INVALID(4009, "二维码已失效"),
-    WAITING_FOLLOW(4010, "等待关注"),
+    WAITING_FOLLOW(4010, "正在登陆请稍后"),
+    MEMBER_RIGHTS_EXIST(4011, "此会员卡权益已存在，请更换绑定~"),
 
     ;
 
@@ -45,6 +46,7 @@ public interface Constants {
     ;
     private Integer state;
     private String desc;
+
   }
 
   @Getter
@@ -59,7 +61,17 @@ public interface Constants {
     private String state;
     private String desc;
     private PayStateEnum sysPayStateEnum;
+
+    public static PayStateEnum getByPayStateEnum (String state) {
+      for (AliPayStateEnum value : AliPayStateEnum.values()) {
+        if (value.getState().equals(state)) {
+          return value.getSysPayStateEnum();
+        }
+      }
+      return AliPayStateEnum.TRADE_CLOSED.getSysPayStateEnum();
+    }
   }
+
 
   @Getter
   @AllArgsConstructor
@@ -117,5 +129,37 @@ public interface Constants {
 
     private Integer state;
     private String desc;
+  }
+
+  @Getter
+  @AllArgsConstructor
+  enum MemberStateEnum {
+    DOWN(0, "已下线"),
+    ONLINE(1, "已上线"),
+    ;
+
+    private Integer state;
+    private String desc;
+  }
+
+  @Getter
+  @AllArgsConstructor
+  enum LoginTypeEnum {
+    EMAIL(1, "邮箱"),
+    PHONE(2, "手机"),
+    MP(3, "公众号"),
+    ;
+
+    private Integer type;
+    private String desc;
+
+    public static LoginTypeEnum getByEnum (Integer type) {
+      for (LoginTypeEnum value : LoginTypeEnum.values()) {
+        if (value.getType().equals(type)) {
+          return value;
+        }
+      }
+      return null;
+    }
   }
 }

@@ -4,7 +4,7 @@
  * @Autor: jinglin.gao
  * @Date: 2023-04-03 09:16:53
  * @LastEditors: jinglin.gao
- * @LastEditTime: 2023-04-19 13:02:06
+ * @LastEditTime: 2023-05-04 09:35:52
  */
 import jsCookie from "js-cookie";
 import copy from 'copy-to-clipboard';
@@ -17,7 +17,10 @@ export const getCookie = (name) => {
 
 
 export const setCookie = (name, value) => {
-    jsCookie.set(name, value);
+    jsCookie.set(name, value, {
+        expires: 30,
+        path: "/",
+    });
 }
 
 export const removeCookie = (name) => {

@@ -32,7 +32,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 /**
- * @author wanmingyu
+ * @author apeto
  * @create 2023/3/27 14:17
  */
 @Profile("!prod")

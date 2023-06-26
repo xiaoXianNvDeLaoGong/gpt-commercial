@@ -4,7 +4,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
 /**
- * @author wanmingyu
+ * @author apeto
  * @create 2023/4/2 11:35 下午
  */
 @Schema(description = "token实体")

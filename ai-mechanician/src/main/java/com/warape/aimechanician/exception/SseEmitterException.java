@@ -6,7 +6,7 @@ import lombok.Getter;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 /**
- * @author wanmingyu
+ * @author apeto
  * @create 2023/4/18 12:06
  */
 @Getter

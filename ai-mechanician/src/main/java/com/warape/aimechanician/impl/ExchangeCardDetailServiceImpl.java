@@ -1,22 +1,21 @@
 package com.warape.aimechanician.impl;
 
-import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.date.DateTime;
 import cn.hutool.core.date.DateUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.warape.aimechanician.config.properties.MemberConfigProperties;
 import com.warape.aimechanician.domain.Constants.ExchangeCardStateEnum;
 import com.warape.aimechanician.entity.ExchangeCardDetail;
 import com.warape.aimechanician.entity.MemberCard;
+import com.warape.aimechanician.entity.MemberRights;
 import com.warape.aimechanician.entity.UserInfo;
 import com.warape.aimechanician.mapper.ExchangeCardDetailMapper;
 import com.warape.aimechanician.service.ExchangeCardDetailService;
+import com.warape.aimechanician.service.MemberRightsService;
 import com.warape.aimechanician.service.UserInfoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
@@ -38,7 +37,7 @@ public class ExchangeCardDetailServiceImpl extends ServiceImpl<ExchangeCardDetai
   @Lazy
   private UserInfoService userInfoService;
   @Autowired
-  private MemberConfigProperties memberConfigProperties;
+  private MemberRightsService memberRightsService;
 
   @Override
   public void consume (Long userId, Integer consumeCount) {
@@ -52,9 +51,13 @@ public class ExchangeCardDetailServiceImpl extends ServiceImpl<ExchangeCardDetai
   @Transactional(rollbackFor = Exception.class)
   public void exchange (Long userId, MemberCard memberCard) {
 
+    if (memberCard == null) {
+      throw new RuntimeException("没有此会员卡");
+    }
+
     DateTime memberTime = DateUtil.offsetDay(new Date(), memberCard.getCardDay());
-    Map<String, Integer> rights = memberConfigProperties.getRights();
-    Integer limitCount = rights.getOrDefault(memberCard.getCardCode(), -1);
+    MemberRights byMemberCode = memberRightsService.getByMemberCode(memberCard.getCardCode());
+    Integer limitCount = byMemberCode.getCount();
     ExchangeCardDetail entity = new ExchangeCardDetail();
     entity.setUserId(userId);
     entity.setMemberCardId(memberCard.getId());
@@ -102,11 +105,12 @@ public class ExchangeCardDetailServiceImpl extends ServiceImpl<ExchangeCardDetai
   }
 
   @Override
-  public boolean checkGive (UserInfo userInfo, MemberCard memberCard) {
+  public boolean checkGive (Long userId, MemberCard memberCard) {
     LambdaQueryWrapper<ExchangeCardDetail> queryWrapper = new LambdaQueryWrapper<>();
-    queryWrapper.le(ExchangeCardDetail::getCreateTime, LocalDate.now());
-    queryWrapper.ge(ExchangeCardDetail::getCreateTime, LocalDate.now());
-    queryWrapper.eq(ExchangeCardDetail::getUserId, userInfo.getId());
+    Date date = new Date();
+    queryWrapper.ge(ExchangeCardDetail::getCreateTime, DateUtil.beginOfDay(date));
+    queryWrapper.le(ExchangeCardDetail::getCreateTime, DateUtil.endOfDay(date));
+    queryWrapper.eq(ExchangeCardDetail::getUserId, userId);
     queryWrapper.eq(ExchangeCardDetail::getMemberCardId, memberCard.getId());
     return CollUtil.isNotEmpty(baseMapper.selectList(queryWrapper));
   }

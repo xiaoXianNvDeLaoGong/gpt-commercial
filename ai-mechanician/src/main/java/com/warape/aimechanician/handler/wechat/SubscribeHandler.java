@@ -3,9 +3,7 @@ package com.warape.aimechanician.handler.wechat;
 import java.util.Map;
 
 import com.warape.aimechanician.builder.TextBuilder;
-import com.warape.aimechanician.domain.SystemConstants.RedisKeyEnum;
 import com.warape.aimechanician.service.UserInfoService;
-import com.warape.aimechanician.utils.StringRedisUtils;
 import lombok.extern.slf4j.Slf4j;
 import me.chanjar.weixin.common.error.WxErrorException;
 import me.chanjar.weixin.common.session.WxSessionManager;
@@ -37,8 +35,8 @@ public class SubscribeHandler extends AbstractHandler {
     WxMpUser userWxInfo = new WxMpUser();
     userWxInfo.setOpenId(wxMessage.getFromUser());
 //      if (userWxInfo != null) {
-    Long userId = userInfoService.getOrCreateWechatUser(userWxInfo);
-    StringRedisUtils.setForTimeMIN(RedisKeyEnum.WECHAT_QR_LOGIN_CODE.getKey(eventKey), userId.toString(), 10);
+//    Long userId = userInfoService.getOrCreateWechatUser(userWxInfo);
+//    StringRedisUtils.setForTimeMIN(RedisKeyEnum.WECHAT_QR_LOGIN_CODE.getKey(eventKey), userId.toString(), 10);
 
 //      }
 //    } catch (WxErrorException e) {
@@ -59,7 +57,7 @@ public class SubscribeHandler extends AbstractHandler {
     }
 
     try {
-      return new TextBuilder().build("感谢关注 回复:领取ChatGPT次数:您的邮箱 免费领取次数哦 如有问题请描述,工作人员会来联系您", wxMessage, weixinService);
+      return new TextBuilder().build("感谢关注", wxMessage, weixinService);
     } catch (Exception e) {
       log.error(e.getMessage(), e);
     }

@@ -17,15 +17,19 @@
 6. AI角色赋能
 7. 会员卡功能
 8. 反馈与建议
+9. 后台管理仪表盘/用户信息/gpt配置/会员卡及权益配置/站点logo配置/网站名称配置....省略~
 
 
 
-## 前端示例
+
+##C端 前端示例
 
 > 公众号交互
 
 <img src="https://github.com/apeto2/gpt-commercial/assets/131843341/73e87373-e707-4079-8a8e-8a3518450ef4?raw=true" alt="图片替换文本" width="200" height="450" align="bottom" />
 
+>登录页面
+![image](https://github.com/apeto2/gpt-commercial/assets/33257808/de03e629-cee3-4f1d-90cf-76a3bf435651)
 
 > 旅游攻略
 
@@ -40,6 +44,21 @@
 > 个人信息
 
 [![个人信息](http://be.apeto.cn/upload/image-qumb.png "Shiprock")](https://be.apeto.cn/archives/shang-ye-ban-chatgpt)
+
+
+### B端前端示例
+
+![image](https://github.com/apeto2/gpt-commercial/assets/33257808/5fce67db-ce55-4e3e-abce-7b82538d53f3)
+
+![image](https://github.com/apeto2/gpt-commercial/assets/33257808/abaf110e-e964-4209-a58a-ed2d04d3eb03)
+
+![image](https://github.com/apeto2/gpt-commercial/assets/33257808/ecdbdb6a-2e88-4f6f-95a1-1592e5f95537)
+
+![image](https://github.com/apeto2/gpt-commercial/assets/33257808/a0fd2bd9-4810-4192-a436-77e9f229c39e)
+
+![image](https://github.com/apeto2/gpt-commercial/assets/33257808/4b6c027e-c9a7-4a7f-868c-0a83dfb01d2c)
+
+![image](https://github.com/apeto2/gpt-commercial/assets/33257808/0bddd712-911a-44af-82f2-033bd41e3a44)
 
 ## 集成框架
 
@@ -57,17 +76,17 @@
 
 ## 模块说明
 
-|   C 端源码    |  服务端     |
-| :---        |    :----:   |  
-|    genius_web   |  ai-mechanician   |
+|   C 端页面源码    |  服务端     | B端后台管理页面源码 |
+| :---        |    :----:   |:------:| 
+|    [genius-web](genius-web)   |  [ai-mechanician](ai-mechanician)   |   [genius-admin](genius-admin)     |
 
 
 ## 部署教程
 
 ### 1.环境安装(新手建议宝塔安装)
-1. mysql
-2. redis
-3. Nginx
+1. mysql >=5.7
+2. redis >=6
+3. Nginx >=2.0
 
 ### 2.初始化SQL
 将ai-mechanician/sql/ai-mechanician.sql导入到mysql中
@@ -90,7 +109,7 @@ services:
   gpt-commercial:
     container_name: gpt-commercial
     network_mode: "host"
-    image: registry.cn-hangzhou.aliyuncs.com/warape/gpt-commercial:v1.0.2
+    image: registry.cn-hangzhou.aliyuncs.com/warape/gpt-commercial:vlatest
     volumes:
       - /www/wwwroot/docker/gpt-commercial/config:/home/spring/config  #config映射目录
       - /www/wwwroot/docker/gpt-commercial/logs:/home/spring/logs     #logs映射目录
@@ -121,7 +140,7 @@ docker-compose -f docker-compose.yaml logs
 
 |  GPT商业版开源讨论群    | 作者微信 如果二维码过期请加我好友 |
 | :---        |    :----:  |
-|  <img src="https://github.com/apeto2/gpt-commercial/assets/131843341/91e1ddad-20ff-46c1-be4b-fe81436bf38d?raw=true" alt="图片替换文本" width="200" height="250" align="bottom" />     |  <img src="https://github.com/apeto2/gpt-commercial/assets/131843341/b6a8b5e2-4448-4e03-9335-9252eb55467b" alt="图片替换文本" width="210" height="250" align="bottom" />     | 
+|  <img src="https://github.com/apeto2/gpt-commercial/assets/131843341/1845add6-7464-4f75-8b4d-cb258f7de26c?raw=true" alt="图片替换文本" width="200" height="250" align="bottom" />     |  <img src="https://github.com/apeto2/gpt-commercial/assets/131843341/b6a8b5e2-4448-4e03-9335-9252eb55467b" alt="图片替换文本" width="210" height="250" align="bottom" />     | 
 
 
 
