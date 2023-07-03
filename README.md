@@ -22,7 +22,7 @@
 
 
 
-##C端 前端示例
+## C端 前端示例
 
 > 公众号交互
 
@@ -109,7 +109,7 @@ services:
   gpt-commercial:
     container_name: gpt-commercial
     network_mode: "host"
-    image: registry.cn-hangzhou.aliyuncs.com/warape/gpt-commercial:vlatest
+    image: registry.cn-hangzhou.aliyuncs.com/warape/gpt-commercial:v1.3.1
     volumes:
       - /www/wwwroot/docker/gpt-commercial/config:/home/spring/config  #config映射目录
       - /www/wwwroot/docker/gpt-commercial/logs:/home/spring/logs     #logs映射目录
@@ -140,13 +140,22 @@ docker-compose -f docker-compose.yaml logs
 
 |  GPT商业版开源讨论群    | 作者微信 如果二维码过期请加我好友 |
 | :---        |    :----:  |
-|  <img src="https://github.com/apeto2/gpt-commercial/assets/131843341/1845add6-7464-4f75-8b4d-cb258f7de26c?raw=true" alt="图片替换文本" width="200" height="250" align="bottom" />     |  <img src="https://github.com/apeto2/gpt-commercial/assets/131843341/b6a8b5e2-4448-4e03-9335-9252eb55467b" alt="图片替换文本" width="210" height="250" align="bottom" />     | 
+|  <img src="https://github.com/apeto2/gpt-commercial/assets/131843341/6d0115e2-0d26-4609-b279-f4e3af3d8eca?raw=true" alt="图片替换文本" width="200" height="250" align="bottom" />     |  <img src="https://github.com/apeto2/gpt-commercial/assets/131843341/b6a8b5e2-4448-4e03-9335-9252eb55467b" alt="图片替换文本" width="210" height="250" align="bottom" />     | 
 
 
 
 ## :100: 以下为plus收费版
 
 > 如果以上开源代码不满足你的要求,可以看一下我们的收费版本 一次购买 持续更新 随着功能的完善后面会涨价哦~ 现在还是优惠阶段
+> 现在卖源码的泛滥，有些直接发你源码。不管你是否有部署能力，也没有售后和运营帮助。更没有持续更新。但我们不一样~~~
+
+1. 私有化部署AI并且永久免费持续更新
+
+2. VIP会员群，答疑解惑，分享成功案例
+
+3. 一个月1次行业整合线上分享会，讨论AI行业方向，提高知识面和生产力
+
+4. 一个月1次技术线上分享会，讨论行业最新技术
 
 ## :link: 演示地址 https://chat.apeto.cn
 
